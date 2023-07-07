@@ -198,10 +198,10 @@ else
     else
       wrapperUrl="https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.2.0/maven-wrapper-3.2.0.jar"
     fi
-    while IFS="=" read -r key value; do
-      # Remove '\r' from value to allow usage on windows as IFS does not consider '\r' as a separator ( considers space, tab, new line ('\n'), and custom '=' )
-      safeValue=$(echo "$value" | tr -d '\r')
-      case "$key" in (wrapperUrl) wrapperUrl="$safeValue"; break ;;
+    while IFS="=" read -r key name; do
+      # Remove '\r' from name to allow usage on windows as IFS does not consider '\r' as a separator ( considers space, tab, new line ('\n'), and custom '=' )
+      safename=$(echo "$name" | tr -d '\r')
+      case "$key" in (wrapperUrl) wrapperUrl="$safename"; break ;;
       esac
     done < "$MAVEN_PROJECTBASEDIR/.mvn/wrapper/maven-wrapper.properties"
     log "Downloading from: $wrapperUrl"
@@ -253,8 +253,8 @@ fi
 
 # If specified, validate the SHA-256 sum of the Maven wrapper jar file
 wrapperSha256Sum=""
-while IFS="=" read -r key value; do
-  case "$key" in (wrapperSha256Sum) wrapperSha256Sum=$value; break ;;
+while IFS="=" read -r key name; do
+  case "$key" in (wrapperSha256Sum) wrapperSha256Sum=$name; break ;;
   esac
 done < "$MAVEN_PROJECTBASEDIR/.mvn/wrapper/maven-wrapper.properties"
 if [ -n "$wrapperSha256Sum" ]; then
