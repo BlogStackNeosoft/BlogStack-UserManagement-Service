@@ -16,6 +16,7 @@ public interface IBlogStackUserPojoEntityMapper {
 
     IBlogStackUserPojoEntityMapper INSTANCE = Mappers.getMapper(IBlogStackUserPojoEntityMapper.class);
     @Mappings({
+            @Mapping(target = "bsuUserId", source = "signUpRequestBean.userId"),
             @Mapping(target = "bsuEmailId", source = "signUpRequestBean.emailId"),
             @Mapping(target = "bsuLastName", source = "signUpRequestBean.lastName"),
             @Mapping(target = "bsuMiddleName", source = "signUpRequestBean.middleName"),
@@ -32,6 +33,7 @@ public interface IBlogStackUserPojoEntityMapper {
 
     public static BiFunction<UserRequestBean, BlogStackUser, BlogStackUser> updateUser = (userRequestBean, blogstackUser) -> {
         blogstackUser.setBsuUserId(userRequestBean.getUserId() != null ? userRequestBean.getUserId() : blogstackUser.getBsuUserId());
+        blogstackUser.setBsuEmailId(userRequestBean.getEmailId() != null ? userRequestBean.getEmailId() : blogstackUser.getBsuEmailId());
         blogstackUser.setBsuLastName(userRequestBean.getLastName() != null ? userRequestBean.getLastName() : blogstackUser.getBsuLastName());
         blogstackUser.setBsuMiddleName(userRequestBean.getMiddleName() != null ? userRequestBean.getMiddleName() : blogstackUser.getBsuMiddleName());
         blogstackUser.setBsuFirstName(userRequestBean.getFirstName() != null ? userRequestBean.getFirstName() : blogstackUser.getBsuFirstName());
@@ -44,5 +46,4 @@ public interface IBlogStackUserPojoEntityMapper {
         blogstackUser.setBsuModifiedDate(LocalDateTime.now());
         return blogstackUser;
     };
-
 }

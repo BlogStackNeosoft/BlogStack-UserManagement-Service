@@ -7,6 +7,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Mapper(componentModel = "spring")
 public interface IBlogStackUserEntityPojoMapper {
 
@@ -27,4 +31,20 @@ public interface IBlogStackUserEntityPojoMapper {
     })
     public UserResponseBean mapUserMasterEntityPojoMapping(BlogStackUser blogStackUser);
 
+    public static Function<List<BlogStackUser>, List<UserResponseBean>> mapUserMasterEntityListToPojoListMapping = blogStackUserList -> blogStackUserList.stream()
+            .map(blogStackUser -> {
+                UserResponseBean.UserResponseBeanBuilder userResponseBeanBuilder = UserResponseBean.builder();
+                userResponseBeanBuilder.userId(blogStackUser.getBsuUserId())
+                        .emailId(blogStackUser.getBsuEmailId())
+                        .lastName(blogStackUser.getBsuLastName())
+                        .middleName(blogStackUser.getBsuMiddleName())
+                        .firstName(blogStackUser.getBsuFirstName())
+                        .address(blogStackUser.getBsuAddress())
+                        .gender(blogStackUser.getBsuGender())
+                        .phoneNumber(blogStackUser.getBsuPhoneNumber())
+                        .dateOfBirth(blogStackUser.getBsuDateOfBirth())
+                        .profilePhoto(blogStackUser.getBsuProfilePhoto())
+                        .status(blogStackUser.getBsuStatus());
+                return userResponseBeanBuilder.build();
+            }).collect(Collectors.toList());
 }

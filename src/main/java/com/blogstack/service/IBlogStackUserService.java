@@ -1,19 +1,20 @@
 package com.blogstack.service;
 
+import com.blogstack.beans.request.SignUpRequestBean;
 import com.blogstack.beans.request.UserRequestBean;
-import com.blogstack.entities.BlogStackUser;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
 public interface IBlogStackUserService {
 
-    public Optional<?> addUser(UserRequestBean userRequestBean);
+    public Mono<?> addUser(SignUpRequestBean signUpRequestBean);
 
-    public Optional<?> fetchUserById(String userId);
+    public Mono<?> fetchUserById(String userId);
 
-    public Optional<?> fetchAll(String filterCriteria, String sortCriteria, Integer page, Integer size);
+    public Mono<?> fetchAll(String filterCriteria, String sortCriteria, Integer page, Integer size);
 
-    public Optional<?> updateUser(UserRequestBean userRequestBean);
+    public Mono<?> updateUser(UserRequestBean userRequestBean);
 
-
+    public Mono<?> deleteUser(String userId);
 }
