@@ -3,12 +3,16 @@ spring:
     allow-bean-definition-overriding: true
   application:
     name: ${MASTER_SERVICE_APPLICATION_NAME:BlogStackIAMService}
-#  profiles.active: local
-#  webflux:
-#    base-path: ${MASTER_SERVICE_BASE_PATH:/iam-management}
+  profiles.active: local
+  webflux:
+    base-path: ${MASTER_SERVICE_BASE_PATH:/iam-management}
+  security:
+    user:
+      name: Test
+      password: Test
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/BlogStackIAMService
+    url: jdbc:postgresql://ec2-18-212-53-8.compute-1.amazonaws.com:5432/BlogStackIAMService
     username: postgres
     password: root
     hikari:
@@ -48,16 +52,5 @@ server:
 #    web:
 #      exposure:
 #        include: "*"
-#
+
 iam-service-version: v1.0
-#
-#openapi3:
-#  group: Master
-#  package.to.scan: com.alsudais
-#  title: Master Service
-#  description: Master Service
-#  version: Version 1.0.0
-#  contact:
-#    name: Al Sudais
-#    url: https://alsudais.com
-#    email: admin@alsudais.com

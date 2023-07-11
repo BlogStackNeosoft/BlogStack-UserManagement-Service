@@ -30,8 +30,8 @@ public class BlogStackUser {
     @Column(name = "bsu_user_id")
     private String bsuUserId;
 
-    @Column(name = "bsu_security_id")
-    private String bsuSecurityId;
+    @Column(name = "bsu_password")
+    private String bsuPassword;
 
     @Column(name = "bsu_email_id")
     private String bsuEmailId;

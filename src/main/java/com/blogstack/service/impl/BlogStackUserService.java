@@ -46,22 +46,6 @@ public class BlogStackUserService implements IBlogStackUserService {
     @Autowired
     private IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper;
 
-    @Override
-    public Mono<?> addUser(SignUpRequestBean signUpRequestBean) {
-        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(signUpRequestBean.getEmailId());
-        LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);
-
-        if(blogStackUserOptional.isPresent())
-            return Mono.just(ServiceResponseBean.builder().status(Boolean.FALSE).message("Email Id Already Exist try with another Email Id.").build());
-
-        String userId = BlogStackCommonUtils.INSTANCE.uniqueIdentifier(UuidPrefixEnum.USER_ID.getValue());
-        LOGGER.info("UserId :: {}", userId);
-
-        signUpRequestBean.setUserId(userId);
-        signUpRequestBean.setCreatedBy(springApplicationName);
-        BlogStackUser blogStackUser = this.blogStackUserRepository.saveAndFlush(this.blogStackUserPojoEntityMapper.INSTANCE.userPojoToUserEntity(signUpRequestBean));
-        return Mono.just(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUser)).build());
-    }
 
     @Override
     public Mono<?> fetchAll(String filterCriteria, String sortCriteria, Integer page, Integer size) {

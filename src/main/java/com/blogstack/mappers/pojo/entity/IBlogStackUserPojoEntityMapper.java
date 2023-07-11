@@ -25,6 +25,7 @@ public interface IBlogStackUserPojoEntityMapper {
             @Mapping(target = "bsuGender",source = "signUpRequestBean.gender"),
             @Mapping(target = "bsuPhoneNumber", source = "signUpRequestBean.phoneNumber"),
             @Mapping(target = "bsuDateOfBirth", source = "signUpRequestBean.dateOfBirth"),
+            @Mapping(target = "bsuPassword", source = "signUpRequestBean.password"),
             @Mapping(target = "bsuStatus", source = "signUpRequestBean.status"),
             @Mapping(target = "bsuCreatedBy", source = "signUpRequestBean.createdBy"),
             @Mapping(target = "bsuCreatedDate", expression = "java(LocalDateTime.now())")
