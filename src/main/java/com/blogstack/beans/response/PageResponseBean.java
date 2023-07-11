@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PageResponseBean <T jfsdkf>{
+public class PageResponseBean <T>{
     @JsonProperty(value = "total_pages")
     private Integer totalPages;
     @JsonProperty(value = "current_page")

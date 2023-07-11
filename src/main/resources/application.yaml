@@ -3,12 +3,12 @@ spring:
     allow-bean-definition-overriding: true
   application:
     name: ${MASTER_SERVICE_APPLICATION_NAME:BlogStackIAMService}
-  profiles.active: local
-  webflux:
-    base-path: ${MASTER_SERVICE_BASE_PATH:/iam-management}
+#  profiles.active: local
+#  webflux:
+#    base-path: ${MASTER_SERVICE_BASE_PATH:/iam-management}
 
   datasource:
-    url: jdbc:postgresql://localhost:8080/BlogStackIAMService
+    url: jdbc:postgresql://localhost:5432/BlogStackIAMService
     username: postgres
     password: root
     hikari:
@@ -35,34 +35,29 @@ spring:
 #    database-change-log-lock-table: databasechangeloglock_alsudais_master_service
 
 server:
-  port: ${MASTER_SERVICE_PORT:8083}
+  port: ${MASTER_SERVICE_PORT:9091}
   error.whitelabel.enabled: false
   http2.enabled: ${HTTP2_ENABLE:true}
 
-grpc:
-  client:
-    iam-grpc-service:
-      address: static://localhost:7071
-      negotiationType: plaintext
-
-management:
-  health:
-    defaults:
-      enabled: false
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
+#
+#management:
+#  health:
+#    defaults:
+#      enabled: false
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#
 iam-service-version: v1.0
-
-openapi3:
-  group: Master
-  package.to.scan: com.alsudais
-  title: Master Service
-  description: Master Service
-  version: Version 1.0.0
-  contact:
-    name: Al Sudais
-    url: https://alsudais.com
-    email: admin@alsudais.com
+#
+#openapi3:
+#  group: Master
+#  package.to.scan: com.alsudais
+#  title: Master Service
+#  description: Master Service
+#  version: Version 1.0.0
+#  contact:
+#    name: Al Sudais
+#    url: https://alsudais.com
+#    email: admin@alsudais.com

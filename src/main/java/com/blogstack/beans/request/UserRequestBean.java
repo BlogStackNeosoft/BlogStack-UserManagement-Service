@@ -25,9 +25,12 @@ import java.util.Set;
 @JsonInclude(Include.NON_NULL)
 public class UserRequestBean {
 
-    @NotNull(message = LocaleMessageCodeConstants.USER_ID_CANT_BLANK)
+    @NotEmpty(message = LocaleMessageCodeConstants.USER_ID_CANT_BLANK)
     @JsonProperty(value = "user_id")
     private String userId;
+
+    @JsonProperty(value = "email_id")
+    private String emailId;
 
     @JsonProperty(value = "last_name")
     private String lastName;
@@ -57,7 +60,7 @@ public class UserRequestBean {
 
     @UserStatus
     @NotEmpty(message = LocaleMessageCodeConstants.USER_STATUS_CANNOT_BE_EMPTY_OR_BLANK)
-    @JsonProperty(value = "status")
+    @JsonProperty(value = "status_set")
     private String status;
 
     @JsonIgnore

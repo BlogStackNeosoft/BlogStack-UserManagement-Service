@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "blogstack-user", schema = "iam_management")
+@Table(name = "blogstack_user", schema = "iam_management")
 public class BlogStackUser {
 
     @Id
