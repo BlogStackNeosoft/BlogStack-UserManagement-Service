@@ -123,6 +123,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>blogstackiamservice</finalName>
     </build>
 
 </project>
