@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public interface IBlogStackUserService {
 
-    public Mono<?> addUser(SignUpRequestBean signUpRequestBean);
 
     public Mono<?> fetchUserById(String userId);
 

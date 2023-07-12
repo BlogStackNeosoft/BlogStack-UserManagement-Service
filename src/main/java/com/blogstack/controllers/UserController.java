@@ -15,13 +15,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path = "${iam-service-version}/user")
 public class UserController {
+
     @Autowired
     private IBlogStackUserService blogStackUserService;
-
-    @PostMapping(value = "/")
-    public Mono<?> addUser(@Valid @RequestBody SignUpRequestBean signUpRequestBean) {
-        return this.blogStackUserService.addUser(signUpRequestBean);
-    }
 
     @GetMapping(value = "/{user_id}")
     public Mono<?> fetchUserById(@PathVariable(value = "user_id") @NotBlank(message = LocaleMessageCodeConstants.USER_ID_CANT_EMPTY) String userId) {

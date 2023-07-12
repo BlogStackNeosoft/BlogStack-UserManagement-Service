@@ -22,7 +22,6 @@ public class UserResponseBean {
     @JsonProperty(value = "user_id")
     private String userId;
 
-
     @JsonProperty(value = "email_id")
     private String emailId;
 
@@ -40,6 +39,9 @@ public class UserResponseBean {
 
     @JsonProperty(value = "phone_number")
     private String phoneNumber;
+
+    @JsonProperty(value = "password")
+    private String password;
 
     @JsonProperty(value = "status")
     private String status;

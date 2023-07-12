@@ -12,8 +12,7 @@ public enum UserStatusEnum {
     ACTIVE("ACTIVE"),
     INACTIVE("INACTIVE"),
     SUSPEND("SUSPEND"),
-    DELETE("DELETE"),
-    ;
+    DELETE("DELETE");
 
     @Getter
     private String value;

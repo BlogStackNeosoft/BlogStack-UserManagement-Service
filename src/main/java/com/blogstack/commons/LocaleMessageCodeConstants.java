@@ -20,7 +20,7 @@ public enum LocaleMessageCodeConstants {
     public static final String OTP_SENT_SUCCESS = "OTP_SENT_SUCCESS";
     public static final String SIGN_IN_SUCCESS = "SIGN_IN_SUCCESS";
     public static final String TOKEN_VERIFICATION_FAILURE = "TOKEN_VERIFICATION_FAILURE";
-    public static final String USER_NOT_PRESENT = "USER_NOT_PRESENT";
+    public static final String USER_NOT_PRESENT = "User not present";
     public static final String PASSWORD_RESET_FAILURE = "PASSWORD_RESET_FAILURE";
     public static final String PASSWORD_RESET_SUCCESS = "PASSWORD_RESET_SUCCESS";
     public static final String SIGN_OUT_SUCCESS = "SIGN_OUT_SUCCESS";
@@ -47,13 +47,11 @@ public enum LocaleMessageCodeConstants {
 
     public static final String PHONE_NUMBER_CANT_BLANK = "PHONE_NUMBER_CANT_BLANK";
     public static final String EMAIL_INVALID = "EMAIL_INVALID";
-    public static final String EMAIL_CANT_BLANK = "EMAIL_CANT_BLANK";
-
-    public static final String EMAIL_OR_USERCODE_CANT_BLANK = "EMAIL_OR_USERCODE_CANT_BLANK";
+    public static final String EMAIL_CANT_BLANK = "Email cannot be b    lank";
     public static final String OLD_PASSWORD_CANT_EMPTY = "OLD_PASSWORD_CANT_EMPTY";
     public static final String NEW_PASSWORD_CANT_EMPTY = "NEW_PASSWORD_CANT_EMPTY";
     public static final String ROLE_NAME_CANT_BLANK = "ROLE_NAME_CANT_BLANK";
-    public static final String PASSWORD_CANT_BLANK = "PASSWORD_CANT_BLANK";
+    public static final String PASSWORD_CANT_BLANK = "password cannot be blank";
     public static final String ACCESS_TOKEN_CANT_EMPTY = "ACCESS_TOKEN_CANT_EMPTY";
     public static final String PLATFORM_NAME_CANT_EMPTY = "PLATFORM_NAME_CANT_EMPTY";
     public static final String PLATFORM_ID_CANT_EMPTY = "PLATFORM_ID_CANT_EMPTY";
@@ -109,4 +107,5 @@ public enum LocaleMessageCodeConstants {
     public static final String USER_ROLE_STATUS_CANNOT_BE_EMPTY_OR_BLANK = "USER_ROLE_STATUS_CANNOT_BE_EMPTY_OR_BLANK";
 
     public static final String USER_ACTIVATE_SUCCESS = "USER_ACTIVATE_SUCCESS";
+    public static final String INCORRECT_PASSWORD = "Incorrect password";
 }
