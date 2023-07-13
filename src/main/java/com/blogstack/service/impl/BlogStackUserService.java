@@ -4,6 +4,8 @@ import com.blogstack.beans.request.SignUpRequestBean;
 import com.blogstack.beans.request.UserRequestBean;
 import com.blogstack.beans.response.PageResponseBean;
 import com.blogstack.beans.response.ServiceResponseBean;
+import com.blogstack.commons.MessageCodeConstants;
+import com.blogstack.entities.BlogStackRoleDetail;
 import com.blogstack.entities.BlogStackUser;
 import com.blogstack.enums.UserStatusEnum;
 import com.blogstack.enums.UuidPrefixEnum;
@@ -28,8 +30,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -68,18 +74,20 @@ public class BlogStackUserService implements IBlogStackUserService {
                         .totalPages(blogStackUserPage.getTotalPages())
                         .currentPage(blogStackUserPage.getNumber())
                         .build()).build())
-                : Mono.error(new BlogStackDataNotFoundException("Data not found."));
+                : Mono.error(new BlogStackDataNotFoundException(MessageCodeConstants.DATA_NOT_FOUND));
     }
 
     @Override
     public Mono<?> fetchUserById(String emailId) {
-        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailId(emailId);
-        LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);
-
-        if(blogStackUserOptional.isEmpty())
-            return Mono.error(new BlogStackDataNotFoundException("User not found."));
-
-        return Mono.just(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get())).build());
+//        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuUserId(emailId);
+//        LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);
+//
+//        if(blogStackUserOptional.isEmpty())
+//            return Mono.error(new BlogStackDataNotFoundException(MessageCodeConstants.DATA_NOT_FOUND));
+//        return Mono.just(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get())).build());
+        Optional<BlogStackUser> byId = this.blogStackUserRepository.findById(BigInteger.ONE.longValue());
+        LOGGER.info("Empty :: {}", byId.get().getBlogStackRoleDetails().isEmpty());
+        return Mono.just(ServiceResponseBean.builder().status(Boolean.TRUE).data(byId).build());
     }
 
     @Override
@@ -88,7 +96,7 @@ public class BlogStackUserService implements IBlogStackUserService {
         LOGGER.debug("BlogStackUserOptional :: {}", blogStackUserOptional);
 
         if (blogStackUserOptional.isEmpty())
-            return Mono.error(new BlogStackDataNotFoundException("Question not found."));
+            return Mono.error(new BlogStackDataNotFoundException(MessageCodeConstants.DATA_NOT_FOUND));
 
         userRequestBean.setModifiedBy(this.springApplicationName);
         BlogStackUser blogStackUser = this.blogStackUserPojoEntityMapper.INSTANCE.updateUser.apply(userRequestBean, blogStackUserOptional.get());

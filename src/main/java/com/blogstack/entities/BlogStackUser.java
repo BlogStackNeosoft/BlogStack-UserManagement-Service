@@ -1,5 +1,6 @@
 package com.blogstack.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @Builder
@@ -64,6 +66,13 @@ public class BlogStackUser {
     @Column(name = "bsu_profile_photo")
     private String bsuProfilePhoto;
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "blogstack_user_role_mapping", schema = "iam_management",
+            joinColumns = @JoinColumn(name = "bsu_seq_id", referencedColumnName = "bsu_seq_id"),
+            inverseJoinColumns = @JoinColumn(name = "brd_seq_id", referencedColumnName = "brd_seq_id"))
+    private Set<BlogStackRoleDetail> blogStackRoleDetails;
+
     @CreatedBy
     @Column(name = "bsu_created_by")
     private String bsuCreatedBy;
@@ -79,4 +88,5 @@ public class BlogStackUser {
     @LastModifiedDate
     @Column(name = "bsu_modified_date")
     private LocalDateTime bsuModifiedDate;
+
 }

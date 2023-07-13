@@ -1,15 +1,13 @@
 package com.blogstack.beans.request;
 
-import com.blogstack.annotations.UserStatus;
 import com.blogstack.commons.BlogStackCommonConstants;
-import com.blogstack.commons.LocaleMessageCodeConstants;
+import com.blogstack.commons.MessageCodeConstants;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +23,7 @@ import java.util.Set;
 @JsonInclude(Include.NON_NULL)
 public class UserRequestBean {
 
-    @NotEmpty(message = LocaleMessageCodeConstants.USER_ID_CANT_BLANK)
+    @NotEmpty(message = MessageCodeConstants.USER_ID_CANT_BLANK)
     @JsonProperty(value = "user_id")
     private String userId;
 
@@ -58,8 +56,7 @@ public class UserRequestBean {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = BlogStackCommonConstants.DOB_DATE_FORMAT)
     private LocalDate dateOfBirth;
 
-    @UserStatus
-    @NotEmpty(message = LocaleMessageCodeConstants.USER_STATUS_CANNOT_BE_EMPTY_OR_BLANK)
+    @NotEmpty(message = MessageCodeConstants.USER_STATUS_CANNOT_BE_EMPTY_OR_BLANK)
     @JsonProperty(value = "status_set")
     private String status;
 

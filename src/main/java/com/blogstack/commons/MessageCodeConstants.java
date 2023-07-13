@@ -3,11 +3,11 @@ package com.blogstack.commons;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum LocaleMessageCodeConstants {
+public enum MessageCodeConstants {
 
     INSTANCE;
 
-    public static final String DATA_NOT_FOUND = "DATA_NOT_FOUND";
+    public static final String DATA_NOT_FOUND = "data not found";
 
     public static final String DATA_DELETED = "DATA_DELETED";
     public static final String USER_WITH_EMAIL_NOT_PRESENT = "USER_WITH_EMAIL_NOT_PRESENT";
@@ -32,8 +32,8 @@ public enum LocaleMessageCodeConstants {
     public static final String MODULE_DETAIL_STATUS_CANNOT_BE_EMPTY_OR_BLANK = "MODULE_DETAIL_STATUS_CANNOT_BE_EMPTY_OR_BLANK";
 
 
-    public static final String ROLE_ID_CANT_EMPTY = "ROLE_ID_CANT_EMPTY";
-    public static final String ROLE_ALREADY_EXIST = "ROLE_ALREADY_EXIST";
+    public static final String ROLE_ID_CANT_EMPTY = "Role id cant empty";
+    public static final String ROLE_ALREADY_EXIST = "Role already exist";
     public static final String USER_ID_CANT_EMPTY = "USER_ID_CANT_EMPTY";
 
     public static final String TENANT_ID_CANT_EMPTY = "TENANT_ID_CANT_EMPTY";
@@ -50,7 +50,7 @@ public enum LocaleMessageCodeConstants {
     public static final String EMAIL_CANT_BLANK = "Email cannot be b    lank";
     public static final String OLD_PASSWORD_CANT_EMPTY = "OLD_PASSWORD_CANT_EMPTY";
     public static final String NEW_PASSWORD_CANT_EMPTY = "NEW_PASSWORD_CANT_EMPTY";
-    public static final String ROLE_NAME_CANT_BLANK = "ROLE_NAME_CANT_BLANK";
+    public static final String ROLE_NAME_CANT_BLANK = "role name cant blank";
     public static final String PASSWORD_CANT_BLANK = "password cannot be blank";
     public static final String ACCESS_TOKEN_CANT_EMPTY = "ACCESS_TOKEN_CANT_EMPTY";
     public static final String PLATFORM_NAME_CANT_EMPTY = "PLATFORM_NAME_CANT_EMPTY";

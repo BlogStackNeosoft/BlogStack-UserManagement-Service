@@ -1,5 +1,6 @@
 package com.blogstack.beans.request;
 
+import com.blogstack.entities.BlogStackRoleDetail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -41,6 +43,9 @@ public class SignUpRequestBean {
 
     @JsonProperty(value = "password")
     private String password;
+
+    @JsonProperty(value = "user_roles")
+    private Set<BlogStackRoleDetail> blogStackRoleDetails;
 
     @JsonProperty(value = "status")
     private String status;

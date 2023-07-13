@@ -4,7 +4,7 @@ import com.blogstack.beans.request.SignInRequestBean;
 import com.blogstack.beans.request.SignUpRequestBean;
 import com.blogstack.beans.response.ServiceResponseBean;
 import com.blogstack.beans.response.JwtResponseBean;
-import com.blogstack.commons.LocaleMessageCodeConstants;
+import com.blogstack.commons.MessageCodeConstants;
 import com.blogstack.entities.BlogStackUser;
 import com.blogstack.enums.UserStatusEnum;
 import com.blogstack.enums.UuidPrefixEnum;
@@ -70,13 +70,13 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         String token;
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(signInRequestBean.getEmailId());
         if (blogStackUserOptional.isEmpty()) {
-            return Mono.just(ServiceResponseBean.builder().status(Boolean.FALSE).message(LocaleMessageCodeConstants.USER_NOT_PRESENT).build());
+            return Mono.just(ServiceResponseBean.builder().status(Boolean.FALSE).message(MessageCodeConstants.USER_NOT_PRESENT).build());
         }
         if (bCryptPasswordEncoder.matches(signInRequestBean.getPassword(), blogStackUserOptional.get().getBsuPassword())) {
             blogStackUserOptional.get().setBsuStatus(UserStatusEnum.ACTIVE.getValue());
             token = this.jwtHelper.generateToken(signInRequestBean.getEmailId());
         } else {
-            return Mono.just(ServiceResponseBean.builder().status(Boolean.FALSE).message(LocaleMessageCodeConstants.INCORRECT_PASSWORD).build());
+            return Mono.just(ServiceResponseBean.builder().status(Boolean.FALSE).message(MessageCodeConstants.INCORRECT_PASSWORD).build());
         }
         this.blogStackUserRepository.saveAndFlush(blogStackUserOptional.get());
         return Mono.just(ServiceResponseBean.builder().status(Boolean.TRUE).data(JwtResponseBean.builder().userId(blogStackUserOptional.get().getBsuEmailId()).jwtToken(token).build()).build());
