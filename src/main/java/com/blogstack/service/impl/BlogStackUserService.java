@@ -12,6 +12,7 @@ import com.blogstack.enums.UuidPrefixEnum;
 import com.blogstack.exceptions.BlogStackDataNotFoundException;
 import com.blogstack.mappers.entity.pojo.IBlogStackUserEntityPojoMapper;
 import com.blogstack.mappers.pojo.entity.IBlogStackUserPojoEntityMapper;
+import com.blogstack.repository.IBlogStackRoleDetailRepository;
 import com.blogstack.repository.IBlogStackUserRepository;
 import com.blogstack.service.IBlogStackUserService;
 import com.blogstack.utils.BlogStackCommonUtils;
@@ -32,6 +33,7 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,6 +50,9 @@ public class BlogStackUserService implements IBlogStackUserService {
 
     @Autowired
     private IBlogStackUserRepository blogStackUserRepository;
+
+    @Autowired
+    private IBlogStackRoleDetailRepository blogStackRoleDetailRepository;
 
     @Autowired
     private IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper;
@@ -79,20 +84,19 @@ public class BlogStackUserService implements IBlogStackUserService {
 
     @Override
     public Mono<?> fetchUserById(String emailId) {
-//        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuUserId(emailId);
-//        LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);
-//
-//        if(blogStackUserOptional.isEmpty())
-//            return Mono.error(new BlogStackDataNotFoundException(MessageCodeConstants.DATA_NOT_FOUND));
-//        return Mono.just(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get())).build());
-        Optional<BlogStackUser> byId = this.blogStackUserRepository.findById(BigInteger.ONE.longValue());
-        LOGGER.info("Empty :: {}", byId.get().getBlogStackRoleDetails().isEmpty());
-        return Mono.just(ServiceResponseBean.builder().status(Boolean.TRUE).data(byId).build());
+        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(emailId);
+        LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);
+
+        Set<BlogStackRoleDetail> roleDetails = new HashSet<>();
+        roleDetails.addAll(this.blogStackRoleDetailRepository.findBlogStackRoleDetailsByBlogStackUsersBsuUserId(blogStackUserOptional.get().getBsuUserId()));
+        blogStackUserOptional.get().setBlogStackRoleDetails(roleDetails);
+
+        return Mono.just(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get())).build());
     }
 
     @Override
     public Mono<?> updateUser(UserRequestBean userRequestBean) {
-        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuUserId(userRequestBean.getUserId());
+        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(userRequestBean.getUserId());
         LOGGER.debug("BlogStackUserOptional :: {}", blogStackUserOptional);
 
         if (blogStackUserOptional.isEmpty())

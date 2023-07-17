@@ -17,9 +17,9 @@ public class BlogStackUserController {
     @Autowired
     private IBlogStackUserService blogStackUserService;
 
-    @GetMapping(value = "/{user_id}")
-    public Mono<?> fetchUserById(@PathVariable(value = "user_id") @NotBlank(message = MessageCodeConstants.USER_ID_CANT_EMPTY) String userId) {
-        return this.blogStackUserService.fetchUserById(userId);
+    @GetMapping(value = "/{email_id}")
+    public Mono<?> fetchUserById(@PathVariable(value = "email_id") @NotBlank(message = MessageCodeConstants.EMAIL_CANT_BLANK) String emailId) {
+        return this.blogStackUserService.fetchUserById(emailId);
     }
 
     @GetMapping(value = "/")

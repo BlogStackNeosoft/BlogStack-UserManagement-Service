@@ -1,11 +1,14 @@
 package com.blogstack.service.impl;
 
+import com.blogstack.beans.request.RoleRequestBean;
 import com.blogstack.beans.request.SignInRequestBean;
 import com.blogstack.beans.request.SignUpRequestBean;
 import com.blogstack.beans.response.ServiceResponseBean;
 import com.blogstack.beans.response.JwtResponseBean;
 import com.blogstack.commons.MessageCodeConstants;
+import com.blogstack.entities.BlogStackRoleDetail;
 import com.blogstack.entities.BlogStackUser;
+import com.blogstack.enums.RoleStatusEnum;
 import com.blogstack.enums.UserStatusEnum;
 import com.blogstack.enums.UuidPrefixEnum;
 import com.blogstack.mappers.entity.pojo.IBlogStackUserEntityPojoMapper;
@@ -23,7 +26,10 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BlogStackAuthenticationService implements IBlogStackAuthenticationService {
@@ -57,10 +63,19 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         String userId = BlogStackCommonUtils.INSTANCE.uniqueIdentifier(UuidPrefixEnum.USER_ID.getValue());
         LOGGER.info("UserId :: {}", userId);
 
+        Set<BlogStackRoleDetail> blogStackRoleDetails = signUpRequestBean.getBlogStackRoleDetails().stream().map(blogStackRoleDetail -> BlogStackRoleDetail.builder()
+                .brdRoleId(BlogStackCommonUtils.INSTANCE.uniqueIdentifier(UuidPrefixEnum.ROLE_ID.getValue()))
+                .brdRoleName(blogStackRoleDetail.getBrdRoleName())
+                .brdStatus(RoleStatusEnum.ACTIVE.getValue())
+                .brdCreatedBy("IAM")
+                .brdCreatedDate(LocalDateTime.now())
+                .build()).collect(Collectors.toSet());
+
         signUpRequestBean.setUserId(userId);
         signUpRequestBean.setStatus(UserStatusEnum.INACTIVE.getValue());
         signUpRequestBean.setCreatedBy(springApplicationName);
         signUpRequestBean.setPassword(this.bCryptPasswordEncoder.encode(signUpRequestBean.getPassword()));
+        signUpRequestBean.setBlogStackRoleDetails(blogStackRoleDetails);
         BlogStackUser blogStackUser = this.blogStackUserRepository.saveAndFlush(this.blogStackUserPojoEntityMapper.INSTANCE.userPojoToUserEntity(signUpRequestBean));
         return Mono.just(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUser)).build());
     }

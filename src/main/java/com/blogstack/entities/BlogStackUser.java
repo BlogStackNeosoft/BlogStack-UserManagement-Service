@@ -3,10 +3,7 @@ package com.blogstack.entities;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -21,6 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@EqualsAndHashCode(exclude = "blogStackRoleDetails")
 @Table(name = "blogstack_user", schema = "iam_management")
 public class BlogStackUser {
 
@@ -69,8 +67,8 @@ public class BlogStackUser {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "blogstack_user_role_mapping", schema = "iam_management",
-            joinColumns = @JoinColumn(name = "bsu_seq_id", referencedColumnName = "bsu_seq_id"),
-            inverseJoinColumns = @JoinColumn(name = "brd_seq_id", referencedColumnName = "brd_seq_id"))
+            joinColumns = @JoinColumn(name = "bsu_user_id", referencedColumnName = "bsu_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "brd_role_id", referencedColumnName = "brd_role_id"))
     private Set<BlogStackRoleDetail> blogStackRoleDetails;
 
     @CreatedBy
