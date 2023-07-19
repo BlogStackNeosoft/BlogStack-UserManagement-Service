@@ -1,18 +1,19 @@
 package com.blogstack.service;
 
 import com.blogstack.beans.request.RoleRequestBean;
-import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 public interface IBlogStackRoleDetailService {
 
-    public Mono<?> addRole(RoleRequestBean roleRequestBean);
+    public Optional<?> addRole(RoleRequestBean roleRequestBean);
 
-    public Mono<?> fetchRoleByRoleId(String roleId);
+    public Optional<?> fetchRoleByRoleName(String roleName);
 
-    public Mono<?> fetchAllRole(String filterCriteria, String sortCriteria, Integer page, Integer size);
+    public Optional<?> fetchAllRole(Integer page, Integer size);
 
-    public Mono<?> updateRole(RoleRequestBean roleRequestBean);
+    public Optional<?> updateRole(RoleRequestBean roleRequestBean);
 
-    public Mono<?> deleteRole(String roleId);
+    public Optional<?> deleteRole(String roleId);
 
 }

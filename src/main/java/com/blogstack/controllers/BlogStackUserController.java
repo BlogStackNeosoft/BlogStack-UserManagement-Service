@@ -1,13 +1,15 @@
 package com.blogstack.controllers;
 
 import com.blogstack.beans.request.UserRequestBean;
-import com.blogstack.commons.MessageCodeConstants;
+import com.blogstack.commons.BlogStackMessageConstants;
 import com.blogstack.service.IBlogStackUserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
+
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "${iam-service-version}/user")
@@ -18,25 +20,23 @@ public class BlogStackUserController {
     private IBlogStackUserService blogStackUserService;
 
     @GetMapping(value = "/{email_id}")
-    public Mono<?> fetchUserById(@PathVariable(value = "email_id") @NotBlank(message = MessageCodeConstants.EMAIL_CANT_BLANK) String emailId) {
+    public Optional<?> fetchUserById(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId) {
         return this.blogStackUserService.fetchUserById(emailId);
     }
 
     @GetMapping(value = "/")
-    public Mono<?> fetchAllUser(@RequestParam(value = "filter_criteria", required = false) String filterCriteria,
-                                @RequestParam(value = "sort_criteria", required = false) String sortCriteria,
-                                @RequestParam(defaultValue = "0") Integer page,
-                                @RequestParam(defaultValue = "2147483647") Integer size) {
-        return this.blogStackUserService.fetchAll(filterCriteria, sortCriteria, page, size);
+    public Optional<?> fetchAllUser(@RequestParam(defaultValue = "0") Integer page,
+                                    @RequestParam(defaultValue = "2147483647") Integer size) {
+        return this.blogStackUserService.fetchAll(page, size);
     }
 
     @PutMapping(value = "/")
-    public Mono<?> updateUser(@Valid @RequestBody UserRequestBean userRequestBean) {
+    public Optional<?> updateUser(@Valid @RequestBody UserRequestBean userRequestBean) {
         return this.blogStackUserService.updateUser(userRequestBean);
     }
 
-    @DeleteMapping(value = "/{user_id}")
-    public Mono<?> deleteUser(@PathVariable(value = "user_id") @NotBlank(message = MessageCodeConstants.USER_ID_CANT_EMPTY) String userId) {
-        return this.blogStackUserService.deleteUser(userId);
+    @DeleteMapping(value = "/{email_id}")
+    public Optional<?> deleteUser(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId) {
+        return this.blogStackUserService.deleteUser(emailId);
     }
 }

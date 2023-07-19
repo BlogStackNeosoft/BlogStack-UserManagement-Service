@@ -1,11 +1,10 @@
 package com.blogstack.beans.request;
 
-import com.blogstack.commons.MessageCodeConstants;
+import com.blogstack.commons.BlogStackMessageConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +20,7 @@ public class RoleRequestBean {
     @JsonProperty(value = "role_id")
     private String roleId;
 
-    @NotBlank(message = MessageCodeConstants.ROLE_NAME_CANT_BLANK)
+    @NotBlank(message = BlogStackMessageConstants.ROLE_NAME_CANT_BLANK)
     @JsonProperty(value = "role_name")
     private String roleName;
 

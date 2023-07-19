@@ -9,11 +9,11 @@ import java.util.Optional;
 public interface IBlogStackUserService {
 
 
-    public Mono<?> fetchUserById(String userId);
+    public Optional<?> fetchUserById(String userId);
 
-    public Mono<?> fetchAll(String filterCriteria, String sortCriteria, Integer page, Integer size);
+    public Optional<?> fetchAll(Integer page, Integer size);
 
-    public Mono<?> updateUser(UserRequestBean userRequestBean);
+    public Optional<?> updateUser(UserRequestBean userRequestBean);
 
-    public Mono<?> deleteUser(String userId);
+    public Optional<?> deleteUser(String userId);
 }

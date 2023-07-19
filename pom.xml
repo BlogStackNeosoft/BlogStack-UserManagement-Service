@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.blogstack</groupId>
-    <artifactId>BlogStackIAMService</artifactId>
+    <artifactId>BlogStackUserManagementService</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>BlogStackIAMService</name>
-    <description>BlogStackIAMService</description>
+    <name>BlogStackUserManagementService</name>
+    <description>BlogStackUserManagementService</description>
     <properties>
         <java.version>17</java.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>

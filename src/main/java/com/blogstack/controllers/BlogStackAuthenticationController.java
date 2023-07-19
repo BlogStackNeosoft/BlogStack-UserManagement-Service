@@ -7,10 +7,11 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "${iam-service-version}/authentication/")
+@RequestMapping(path = "${iam-service-version}/authentication")
 @CrossOrigin("*")
 public class BlogStackAuthenticationController {
 
@@ -18,12 +19,12 @@ public class BlogStackAuthenticationController {
     private IBlogStackAuthenticationService blogStackAuthenticationService;
 
     @PostMapping(value = "/sign-up/")
-    public Mono<?> signUp(@Valid @RequestBody SignUpRequestBean signUpRequestBean) {
+    public Optional<?> signUp(@Valid @RequestBody SignUpRequestBean signUpRequestBean) {
         return this.blogStackAuthenticationService.signUp(signUpRequestBean);
     }
 
     @PostMapping(value = "/sign-in/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<?> signIn(@Valid @RequestBody SignInRequestBean signInRequestBean) {
+    public Optional<?> signIn(@Valid @RequestBody SignInRequestBean signInRequestBean) {
         return this.blogStackAuthenticationService.signIn(signInRequestBean);
     }
 

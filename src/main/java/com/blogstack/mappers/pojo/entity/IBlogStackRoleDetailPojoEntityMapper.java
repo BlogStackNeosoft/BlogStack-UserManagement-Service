@@ -18,9 +18,7 @@ public interface IBlogStackRoleDetailPojoEntityMapper {
     @Mappings({
             @Mapping(target = "brdRoleId", source = "roleRequestBean.roleId"),
             @Mapping(target = "brdRoleName",source = "roleRequestBean.roleName"),
-            @Mapping(target = "brdStatus",source = "roleRequestBean.status"),
-            @Mapping(target = "brdCreatedBy",source = "roleRequestBean.createdBy"),
-            @Mapping(target = "brdCreatedDate",expression = "java(LocalDateTime.now())")
+            @Mapping(target = "brdStatus",source = "roleRequestBean.status")
     })
     BlogStackRoleDetail rolePojoToRoleEntity(RoleRequestBean roleRequestBean);
 
@@ -28,8 +26,6 @@ public interface IBlogStackRoleDetailPojoEntityMapper {
         blogStackRoleDetail.setBrdRoleId(roleRequestBean.getRoleId() != null ? roleRequestBean.getRoleId() : blogStackRoleDetail.getBrdRoleId());
         blogStackRoleDetail.setBrdRoleName(roleRequestBean.getRoleName() != null ? roleRequestBean.getRoleName() : blogStackRoleDetail.getBrdRoleName());
         blogStackRoleDetail.setBrdStatus(roleRequestBean.getStatus() != null ? roleRequestBean.getStatus() : blogStackRoleDetail.getBrdStatus());
-        blogStackRoleDetail.setBrdModifiedBy(roleRequestBean.getModifiedBy() != null ? roleRequestBean.getModifiedBy() : blogStackRoleDetail.getBrdModifiedBy());
-        blogStackRoleDetail.setBrdModifiedDate(LocalDateTime.now());
         return blogStackRoleDetail;
     };
 }
