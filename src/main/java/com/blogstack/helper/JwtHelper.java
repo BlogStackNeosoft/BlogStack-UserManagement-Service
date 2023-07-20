@@ -14,7 +14,9 @@ import java.util.function.Function;
 public class JwtHelper {
 
     //requirement :
-    public static final long JWT_TOKEN_VALIDITY = 24 * 60 * 60;
+    public static final long JWT_TOKEN_VALIDITY =  1000 * 60 * 15;
+
+    public static final long JWT_REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 24;
 
     //    public static final long JWT_TOKEN_VALIDITY =  60;
     private final String secret = "afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf";
@@ -59,7 +61,7 @@ public class JwtHelper {
     private String doGenerateToken(Map<String, Object> claims, String subject) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
@@ -71,7 +73,7 @@ public class JwtHelper {
     private String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY ))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_REFRESH_TOKEN_VALIDITY ))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
