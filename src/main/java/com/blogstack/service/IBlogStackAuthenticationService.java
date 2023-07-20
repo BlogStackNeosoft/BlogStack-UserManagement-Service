@@ -11,4 +11,6 @@ public interface IBlogStackAuthenticationService {
 
     public Optional<?> signIn(SignInRequestBean signInRequestBean);
 
+    public Optional<?> refreshTokens(String refreshToken);
+
 }

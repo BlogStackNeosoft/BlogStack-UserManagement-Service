@@ -86,19 +86,37 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
 
     @Override
     public Optional<?> signIn(SignInRequestBean signInRequestBean) {
-        String token;
+        String accessToken, refreshToken;
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(signInRequestBean.getEmailId());
         if (blogStackUserOptional.isEmpty()) {
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_NOT_PRESENT);
         }
         if (bCryptPasswordEncoder.matches(signInRequestBean.getPassword(), blogStackUserOptional.get().getBsuPassword())) {
             blogStackUserOptional.get().setBsuStatus(UserStatusEnum.ACTIVE.getValue());
-            token = this.jwtHelper.generateToken(signInRequestBean.getEmailId());
+            accessToken = this.jwtHelper.generateToken(signInRequestBean.getEmailId());
+            refreshToken = this.jwtHelper.generateRefreshToken(signInRequestBean.getEmailId());
         } else {
             return Optional.of(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.INCORRECT_PASSWORD).build());
         }
         this.blogStackUserRepository.saveAndFlush(blogStackUserOptional.get());
-        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).data(JwtResponseBean.builder().userId(blogStackUserOptional.get().getBsuEmailId()).jwtToken(token).build()).build());
+        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).data(JwtResponseBean.builder().userId(blogStackUserOptional.get().getBsuEmailId()).jwtToken(accessToken).refreshToken(refreshToken).build()).build());
     }
+
+    @Override
+    public Optional<?> refreshTokens(String token) {
+        String email = jwtHelper.getSubject(token);
+        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(email);
+        if (blogStackUserOptional.isEmpty())
+            throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_NOT_PRESENT);
+        else if(blogStackUserOptional.isPresent() && jwtHelper.validateToken(token))
+        {
+            String accessToken = this.jwtHelper.generateToken(email);
+            String refreshToken= this.jwtHelper.generateRefreshToken(email);
+            return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).data(JwtResponseBean.builder().userId(blogStackUserOptional.get().getBsuEmailId()).jwtToken(accessToken).refreshToken(refreshToken).build()).build());
+        }
+        else
+            return Optional.of(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.INVALID_TOKEN).build());
+    }
+
 
 }

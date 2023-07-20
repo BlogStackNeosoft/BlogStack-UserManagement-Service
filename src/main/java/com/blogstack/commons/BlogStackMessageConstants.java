@@ -31,4 +31,5 @@ public enum BlogStackMessageConstants {
 
     public static final String PASSWORD_CANT_BLANK = "Password cannot be blank";
     public static final String EMAIL_ID_ALREADY_EXISTS = "Email Id Already Exists";
+    public static final String INVALID_TOKEN = "Invalid token";
 }

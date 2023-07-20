@@ -62,4 +62,26 @@ public class JwtHelper {
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
+
+    public String generateRefreshToken(String emailId){
+        Map<String, Object> claims = new HashMap<>();
+        return doGenerateRefreshToken(claims, emailId);
+    }
+
+    private String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
+
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY ))
+                .signWith(SignatureAlgorithm.HS512, secret).compact();
+    }
+
+    public String getSubject(String token)
+    {
+        return getAllClaimsFromToken(token).getSubject();
+    }
+
+    public Boolean validateToken(String token) {
+
+        return (!isTokenExpired(token));
+    }
 }

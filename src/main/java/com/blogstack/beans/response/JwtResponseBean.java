@@ -17,4 +17,7 @@ public class JwtResponseBean {
     @JsonProperty(value = "jwt_token")
     private String jwtToken;
 
+    @JsonProperty(value = "refresh_token")
+    private String refreshToken;
+
 }

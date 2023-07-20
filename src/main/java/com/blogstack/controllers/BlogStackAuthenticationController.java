@@ -28,4 +28,9 @@ public class BlogStackAuthenticationController {
         return this.blogStackAuthenticationService.signIn(signInRequestBean);
     }
 
+    @PostMapping(value = "/refresh-token/{token}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public Optional<?> refreshToken(@PathVariable String token){
+        return this.blogStackAuthenticationService.refreshTokens(token);
+    }
+
 }

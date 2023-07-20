@@ -25,4 +25,5 @@ public class ServiceResponseBean {
 	private Object data;
 	
 	private Set<String> errors;
+
 }
