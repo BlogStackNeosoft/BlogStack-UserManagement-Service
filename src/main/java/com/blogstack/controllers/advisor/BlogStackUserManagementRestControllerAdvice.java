@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class BlogStackIAMRestControllerAdvice {
+public class BlogStackUserManagementRestControllerAdvice {
 
     @ResponseStatus(HttpStatus.ALREADY_REPORTED)
     @ExceptionHandler(BlogStackCustomException.class)
-    public ServiceResponseBean handleblogStackCustomException(BlogStackCustomException blogStackCustomException) {
+    public ServiceResponseBean handleBlogStackCustomException(BlogStackCustomException blogStackCustomException) {
         return ServiceResponseBean.builder()
                 .message(blogStackCustomException.getMessage())
                 .build();
@@ -21,7 +21,7 @@ public class BlogStackIAMRestControllerAdvice {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(BlogStackDataNotFoundException.class)
-    public ServiceResponseBean handleAlSudaisDataNotFoundException(BlogStackDataNotFoundException blogStackDataNotFoundException) {
+    public ServiceResponseBean handleBlogStackUserManagementDataNotFoundException(BlogStackDataNotFoundException blogStackDataNotFoundException) {
         return ServiceResponseBean.builder()
                 .message(blogStackDataNotFoundException.getMessage())
                 .build();

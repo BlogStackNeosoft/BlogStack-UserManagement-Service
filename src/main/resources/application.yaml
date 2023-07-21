@@ -16,12 +16,3 @@ server:
   port: 9091
 
 iam-service-version: v1.0
-
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://10.0.61.198:8761/eureka

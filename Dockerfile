@@ -2,6 +2,6 @@ FROM eclipse-temurin:20-alpine
 
 WORKDIR /app
 
-COPY target/employeeapp.jar /app/employeeapp.jar
+COPY target/user-management-service.jar /app/user-management-service.jar
 
-ENTRYPOINT ["java", "-jar", "employeeapp.jar"]
+ENTRYPOINT ["java", "-jar", "user-management-service.jar"]
