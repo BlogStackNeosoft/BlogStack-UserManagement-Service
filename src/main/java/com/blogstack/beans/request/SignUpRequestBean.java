@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,9 +26,11 @@ public class SignUpRequestBean {
     private String userId;
 
     @JsonProperty(value = "email_id")
+    @NotBlank(message = "Email connot be blank")
     private String emailId;
 
     @JsonProperty(value = "last_name")
+    @NotBlank(message = "Email connot be blank")
     private String lastName;
 
     @JsonProperty(value = "middle_name")
@@ -42,9 +46,11 @@ public class SignUpRequestBean {
     private String phoneNumber;
 
     @JsonProperty(value = "password")
+    @NotBlank(message = "Password cannot be blank")
     private String password;
 
     @JsonProperty(value = "user_roles")
+    @NotBlank(message = "Role can not be blank")
     private Set<BlogStackRoleDetail> blogStackRoleDetails;
 
     @JsonProperty(value = "status")
