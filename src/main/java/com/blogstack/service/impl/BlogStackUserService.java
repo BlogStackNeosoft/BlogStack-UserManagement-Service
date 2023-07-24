@@ -107,4 +107,10 @@ public class BlogStackUserService implements IBlogStackUserService {
         this.blogStackUserRepository.saveAndFlush(blogStackUserOptional.get());
         return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).message(BlogStackMessageConstants.DATA_DELETED).build());
     }
+
+    @Override
+    public Optional<?> updateUser(BlogStackUser blogStackUser) {
+        BlogStackUser UpdatedBlogStackUser = this.blogStackUserRepository.saveAndFlush(blogStackUser);
+        return Optional.of(UpdatedBlogStackUser);
+    }
 }

@@ -21,9 +21,9 @@ public class BlogStackAuthenticationController {
     @Autowired
     private IBlogStackAuthenticationService blogStackAuthenticationService;
 
-    @PostMapping(value = "/sign-up/")
-    public Optional<?> signUp(@RequestParam(required = false)MultipartFile blogStackUserProfilePhoto,@Valid @RequestBody SignUpRequestBean signUpRequestBean) throws IOException {
-        return this.blogStackAuthenticationService.signUp(signUpRequestBean,blogStackUserProfilePhoto);
+    @PostMapping("/sign-up/")
+    public Optional<?> signUp(@Valid @RequestBody SignUpRequestBean signUpRequestBean) throws IOException {
+        return this.blogStackAuthenticationService.signUp(signUpRequestBean);
     }
 
     @PostMapping(value = "/sign-in/", produces = MediaType.APPLICATION_JSON_VALUE)
