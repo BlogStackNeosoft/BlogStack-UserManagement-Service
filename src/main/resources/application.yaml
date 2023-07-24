@@ -4,7 +4,7 @@ spring:
   application:
     name: BlogStackIAMService
   datasource:
-    url: jdbc:postgresql://ec2-18-212-53-8.compute-1.amazonaws.com:5432/BlogStackUserManagement
+    url: jdbc:postgresql://ec2-3-84-24-210.compute-1.amazonaws.com:5432/blogstackusermanagement
     username: postgres
     password: root
   jpa:
