@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 @RestControllerAdvice
 public class BlogStackUserManagementRestControllerAdvice {
 
@@ -24,6 +27,22 @@ public class BlogStackUserManagementRestControllerAdvice {
     public ServiceResponseBean handleBlogStackUserManagementDataNotFoundException(BlogStackDataNotFoundException blogStackDataNotFoundException) {
         return ServiceResponseBean.builder()
                 .message(blogStackDataNotFoundException.getMessage())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(FileNotFoundException.class)
+    public ServiceResponseBean handleBlogStackUserManagementFileNotFoundException(FileNotFoundException fileNotFoundException){
+        return ServiceResponseBean.builder()
+                .message(fileNotFoundException.getMessage())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(IOException.class)
+    public ServiceResponseBean handleBlogStackUserManagementIOException(IOException ioException){
+        return ServiceResponseBean.builder()
+                .message(ioException.getMessage())
                 .build();
     }
 

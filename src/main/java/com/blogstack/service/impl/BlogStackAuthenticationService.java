@@ -17,6 +17,7 @@ import com.blogstack.mappers.pojo.entity.IBlogStackUserPojoEntityMapper;
 import com.blogstack.repository.IBlogStackRoleDetailRepository;
 import com.blogstack.repository.IBlogStackUserRepository;
 import com.blogstack.service.IBlogStackAuthenticationService;
+import com.blogstack.service.IBlogStackS3BucketProfilePhotoUploadService;
 import com.blogstack.utils.BlogStackCommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 import java.util.Set;
@@ -54,8 +57,11 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
     @Autowired
     private IBlogStackRoleDetailRepository blogStackRoleDetailRepository;
 
+    @Autowired
+    private IBlogStackS3BucketProfilePhotoUploadService blogStackS3BucketProfilePhotoUploadService;
+
     @Override
-    public Optional<?> signUp(SignUpRequestBean signUpRequestBean) {
+    public Optional<?> signUp(SignUpRequestBean signUpRequestBean, MultipartFile blogStackUserProfilePhoto) throws IOException {
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(signUpRequestBean.getEmailId());
         LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);
 
@@ -75,12 +81,20 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
                             .build());
         }).collect(Collectors.toSet());
 
+        Optional<String> blogStackProfilePhotoUri = null;
+        // uploading the profile photo to S3 bucket
+        if(blogStackUserProfilePhoto != null) {
+            blogStackProfilePhotoUri = this.blogStackS3BucketProfilePhotoUploadService.uploadFile(blogStackUserProfilePhoto);
+        }
+
         signUpRequestBean.setUserId(userId);
         signUpRequestBean.setStatus(UserStatusEnum.INACTIVE.getValue());
         signUpRequestBean.setCreatedBy(springApplicationName);
         signUpRequestBean.setPassword(this.bCryptPasswordEncoder.encode(signUpRequestBean.getPassword()));
         signUpRequestBean.setBlogStackRoleDetails(blogStackRoleDetails);
+        signUpRequestBean.setProfilePhoto(blogStackProfilePhotoUri.get());
         BlogStackUser blogStackUser = this.blogStackUserRepository.saveAndFlush(this.blogStackUserPojoEntityMapper.INSTANCE.userPojoToUserEntity(signUpRequestBean));
+
         return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUser)).build());
     }
 

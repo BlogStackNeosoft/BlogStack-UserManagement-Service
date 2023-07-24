@@ -16,3 +16,17 @@ server:
   port: 9091
 
 iam-service-version: v1.0
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIAXFYS2UY4HNPCI35G
+      secret-key: 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
+    region:
+      static: us-east-1
+    stack:
+      auto: false
+
+application:
+  bucket:
+    name: blogstackprofilephoto

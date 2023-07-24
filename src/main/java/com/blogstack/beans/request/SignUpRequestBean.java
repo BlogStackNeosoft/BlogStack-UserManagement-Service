@@ -49,8 +49,8 @@ public class SignUpRequestBean {
     @NotBlank(message = "Password cannot be blank")
     private String password;
 
-    @JsonProperty(value = "user_roles")
-    @NotBlank(message = "Role can not be blank")
+    @JsonProperty(value = "blogStackRoleDetails")
+    @NotNull(message = "Role can not be blank")
     private Set<BlogStackRoleDetail> blogStackRoleDetails;
 
     @JsonProperty(value = "status")

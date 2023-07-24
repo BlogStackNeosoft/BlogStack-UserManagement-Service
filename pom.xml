@@ -98,6 +98,16 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>aws.sdk.kotlin</groupId>
+            <artifactId>aws-core-jvm</artifactId>
+            <version>0.26.0-beta</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.11.133</version>
+        </dependency>
     </dependencies>
 
     <build>

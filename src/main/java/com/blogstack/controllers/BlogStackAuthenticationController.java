@@ -7,7 +7,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @RestController
@@ -20,8 +22,8 @@ public class BlogStackAuthenticationController {
     private IBlogStackAuthenticationService blogStackAuthenticationService;
 
     @PostMapping(value = "/sign-up/")
-    public Optional<?> signUp(@Valid @RequestBody SignUpRequestBean signUpRequestBean) {
-        return this.blogStackAuthenticationService.signUp(signUpRequestBean);
+    public Optional<?> signUp(@RequestParam(required = false)MultipartFile blogStackUserProfilePhoto,@Valid @RequestBody SignUpRequestBean signUpRequestBean) throws IOException {
+        return this.blogStackAuthenticationService.signUp(signUpRequestBean,blogStackUserProfilePhoto);
     }
 
     @PostMapping(value = "/sign-in/", produces = MediaType.APPLICATION_JSON_VALUE)
