@@ -84,5 +84,4 @@ public class BlogStackUser {
     @LastModifiedDate
     @Column(name = "bsu_modified_date")
     private LocalDateTime bsuModifiedDate;
-
 }

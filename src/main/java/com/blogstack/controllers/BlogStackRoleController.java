@@ -6,6 +6,8 @@ import com.blogstack.service.IBlogStackRoleDetailService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -19,29 +21,38 @@ public class BlogStackRoleController {
     private IBlogStackRoleDetailService blogStackRoleDetailService;
 
     @PostMapping(value = "/")
-    public Optional<?> addRole(@Valid @RequestBody RoleRequestBean roleRequestBean) {
-        return this.blogStackRoleDetailService.addRole(roleRequestBean);
+    public ResponseEntity<?> addRole(@Valid @RequestBody RoleRequestBean roleRequestBean) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(this.blogStackRoleDetailService.addRole(roleRequestBean));
     }
 
     @GetMapping(value = "/{role_name}")
-    public Optional<?> fetchRoleById(@PathVariable(value = "role_name") @NotBlank(message = BlogStackMessageConstants.ROLE_NAME_CANT_BLANK) String roleName) {
-        return this.blogStackRoleDetailService.fetchRoleByRoleName(roleName);
+    public ResponseEntity<?> fetchRoleById(@PathVariable(value = "role_name") @NotBlank(message = BlogStackMessageConstants.ROLE_NAME_CANT_BLANK) String roleName) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(this.blogStackRoleDetailService.fetchRoleByRoleName(roleName));
     }
 
     @GetMapping(value = "/")
-    public Optional<?> fetchAllRole(@RequestParam(defaultValue = "0") Integer page,
-                                    @RequestParam(defaultValue = "2147483647") Integer size) {
-        return this.blogStackRoleDetailService.fetchAllRole(page, size);
+    public ResponseEntity<?> fetchAllRole(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "2147483647") Integer size) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(this.blogStackRoleDetailService.fetchAllRole(page, size));
     }
 
     @PutMapping(value = "/")
-    public Optional<?> updateRole(@Valid @RequestBody RoleRequestBean roleRequestBean) {
-        return this.blogStackRoleDetailService.updateRole(roleRequestBean);
+    public ResponseEntity<?> updateRole(@Valid @RequestBody RoleRequestBean roleRequestBean) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(this.blogStackRoleDetailService.updateRole(roleRequestBean));
     }
 
     @DeleteMapping(value = "/{role_name}")
-    public Optional<?> deleteRole(@PathVariable(value = "role_name") @NotBlank(message = BlogStackMessageConstants.ROLE_ID_CANT_EMPTY) String roleId) {
-        return this.blogStackRoleDetailService.deleteRole(roleId);
+    public ResponseEntity<?> deleteRole(@PathVariable(value = "role_name") @NotBlank(message = BlogStackMessageConstants.ROLE_ID_CANT_EMPTY) String roleId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(this.blogStackRoleDetailService.deleteRole(roleId));
     }
 
 }

@@ -53,8 +53,8 @@ public class UserRequestBean {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = BlogStackCommonConstants.DOB_DATE_FORMAT)
     private LocalDate dateOfBirth;
 
-    @NotEmpty(message = BlogStackMessageConstants.USER_STATUS_CANNOT_BE_EMPTY_OR_BLANK)
-    @JsonProperty(value = "status_set")
+//    @NotEmpty(message = BlogStackMessageConstants.USER_STATUS_CANNOT_BE_EMPTY_OR_BLANK)
+    @JsonIgnore
     private String status;
 
     @JsonIgnore

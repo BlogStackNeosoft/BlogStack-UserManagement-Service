@@ -14,7 +14,6 @@ import java.io.IOException;
 @RestControllerAdvice
 public class BlogStackUserManagementRestControllerAdvice {
 
-    @ResponseStatus(HttpStatus.ALREADY_REPORTED)
     @ExceptionHandler(BlogStackCustomException.class)
     public ServiceResponseBean handleBlogStackCustomException(BlogStackCustomException blogStackCustomException) {
         return ServiceResponseBean.builder()
@@ -22,7 +21,6 @@ public class BlogStackUserManagementRestControllerAdvice {
                 .build();
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(BlogStackDataNotFoundException.class)
     public ServiceResponseBean handleBlogStackUserManagementDataNotFoundException(BlogStackDataNotFoundException blogStackDataNotFoundException) {
         return ServiceResponseBean.builder()
@@ -30,7 +28,6 @@ public class BlogStackUserManagementRestControllerAdvice {
                 .build();
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(FileNotFoundException.class)
     public ServiceResponseBean handleBlogStackUserManagementFileNotFoundException(FileNotFoundException fileNotFoundException){
         return ServiceResponseBean.builder()
@@ -38,7 +35,6 @@ public class BlogStackUserManagementRestControllerAdvice {
                 .build();
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(IOException.class)
     public ServiceResponseBean handleBlogStackUserManagementIOException(IOException ioException){
         return ServiceResponseBean.builder()

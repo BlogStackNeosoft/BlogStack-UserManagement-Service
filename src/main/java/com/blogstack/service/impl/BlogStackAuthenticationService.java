@@ -33,10 +33,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class BlogStackAuthenticationService implements IBlogStackAuthenticationService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-
     @Autowired
     private JwtHelper jwtHelper;
 
@@ -76,7 +73,6 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
                             .build());
         }).collect(Collectors.toSet());
 
-
         signUpRequestBean.setUserId(userId);
         signUpRequestBean.setStatus(UserStatusEnum.INACTIVE.getValue());
         signUpRequestBean.setCreatedBy(springApplicationName);
@@ -85,7 +81,10 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
 
         BlogStackUser blogStackUser = this.blogStackUserRepository.saveAndFlush(this.blogStackUserPojoEntityMapper.INSTANCE.userPojoToUserEntity(signUpRequestBean));
 
-        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUser)).build());
+        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).
+                message(BlogStackMessageConstants.USER_CREATED_SUCCESSFULLY)
+                        .data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUser))
+                .build());
     }
 
     @Override
@@ -103,7 +102,16 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
             return Optional.of(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.INCORRECT_PASSWORD).build());
         }
         this.blogStackUserRepository.saveAndFlush(blogStackUserOptional.get());
-        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).data(JwtResponseBean.builder().userId(blogStackUserOptional.get().getBsuEmailId()).jwtToken(accessToken).refreshToken(refreshToken).build()).build());
+        Optional<BlogStackUser> blogStackUser = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(signInRequestBean.getEmailId());
+        Set<String> roleName = blogStackUser.get().getBlogStackRoleDetails().stream().map(BlogStackRoleDetail::getBrdRoleName).collect(Collectors.toSet());
+        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE)
+                .data(JwtResponseBean.builder()
+                        .userId(blogStackUserOptional.get().getBsuEmailId())
+                        .jwtToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .blogStackRoleDetails(roleName)
+                        .build())
+                .build());
     }
 
     @Override

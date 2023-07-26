@@ -23,7 +23,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SignUpRequestBean {
 
-    @JsonProperty(value = "user_id")
+    @JsonIgnore
     private String userId;
 
     @JsonProperty(value = "email_id")
@@ -54,7 +54,7 @@ public class SignUpRequestBean {
     @NotNull(message = "Role can not be blank")
     private Set<BlogStackRoleDetail> blogStackRoleDetails;
 
-    @JsonProperty(value = "status")
+    @JsonIgnore
     private String status;
 
     @JsonProperty(value = "date_of_birth")
@@ -71,5 +71,4 @@ public class SignUpRequestBean {
 
     @JsonIgnore
     private String modifiedBy;
-
 }

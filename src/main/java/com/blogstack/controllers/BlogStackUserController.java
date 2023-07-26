@@ -7,6 +7,8 @@ import com.blogstack.service.IBlogStackUserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,14 +28,17 @@ public class BlogStackUserController {
     private IBlogStackS3BucketPhotoUploadService blogStackS3BucketProfilePhotoUploadService;
 
     @GetMapping(value = "/{email_id}")
-    public Optional<?> fetchUserById(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId) {
-        return this.blogStackUserService.fetchUserById(emailId);
+    public ResponseEntity<?> fetchUserById(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(this.blogStackUserService.fetchUserById(emailId));
     }
 
     @GetMapping(value = "/")
-    public Optional<?> fetchAllUser(@RequestParam(defaultValue = "0") Integer page,
-                                    @RequestParam(defaultValue = "2147483647") Integer size) {
-        return this.blogStackUserService.fetchAll(page, size);
+    public ResponseEntity<?> fetchAllUser(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "2147483647") Integer size) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(this.blogStackUserService.fetchAll(page, size));
     }
 
     @PutMapping(value = "/")
@@ -42,14 +47,16 @@ public class BlogStackUserController {
     }
 
     @DeleteMapping(value = "/{email_id}")
-    public Optional<?> deleteUser(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId) {
-        return this.blogStackUserService.deleteUser(emailId);
+    public ResponseEntity<?> deleteUser(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(this.blogStackUserService.deleteUser(emailId));
     }
 
     @PostMapping(value = "/profile-photo/{email_id}")
-    public Optional<?> updateProfilePhoto(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId, @RequestParam(value = "profile_pic")MultipartFile profilePic) throws IOException {
-        return this.blogStackS3BucketProfilePhotoUploadService.uploadProfilePhoto(emailId,profilePic);
+    public ResponseEntity<?> updateProfilePhoto(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId, @RequestParam(value = "profile_pic")MultipartFile profilePic) throws IOException {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(this.blogStackS3BucketProfilePhotoUploadService.uploadProfilePhoto(emailId,profilePic));
     }
-
-
 }
