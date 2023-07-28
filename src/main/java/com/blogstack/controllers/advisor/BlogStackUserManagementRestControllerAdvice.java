@@ -21,6 +21,7 @@ public class BlogStackUserManagementRestControllerAdvice {
                 .build();
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(BlogStackDataNotFoundException.class)
     public ServiceResponseBean handleBlogStackUserManagementDataNotFoundException(BlogStackDataNotFoundException blogStackDataNotFoundException) {
         return ServiceResponseBean.builder()

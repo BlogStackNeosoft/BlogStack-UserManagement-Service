@@ -22,10 +22,10 @@ import java.time.LocalDate;
 @JsonInclude(Include.NON_NULL)
 public class UserRequestBean {
 
-    @NotEmpty(message = BlogStackMessageConstants.USER_ID_CANT_BLANK)
     @JsonProperty(value = "user_id")
     private String userId;
 
+    @NotEmpty(message = BlogStackMessageConstants.EMAIL_CANT_BLANK)
     @JsonProperty(value = "email_id")
     private String emailId;
 
@@ -53,7 +53,6 @@ public class UserRequestBean {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = BlogStackCommonConstants.DOB_DATE_FORMAT)
     private LocalDate dateOfBirth;
 
-//    @NotEmpty(message = BlogStackMessageConstants.USER_STATUS_CANNOT_BE_EMPTY_OR_BLANK)
     @JsonIgnore
     private String status;
 

@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -46,14 +48,14 @@ public class BlogStackUserService implements IBlogStackUserService {
     private IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper;
 
     @Override
-    public Optional<?> fetchAll(Integer page, Integer size) {
+    public ResponseEntity<?> fetchAll(Integer page, Integer size) {
         Page<BlogStackUser> blogStackUserPage = this.blogStackUserRepository.findAll(PageRequest.of(page, size));
         LOGGER.debug("BlogStackUserPage :: {}", blogStackUserPage);
 
-        if(CollectionUtils.isEmpty(blogStackUserPage.toList()))
+        if (CollectionUtils.isEmpty(blogStackUserPage.toList()))
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.DATA_NOT_FOUND);
 
-        return Optional.of(ServiceResponseBean.builder()
+        return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder()
                 .status(Boolean.TRUE).data(PageResponseBean.builder().payload(IBlogStackUserEntityPojoMapper.mapUserMasterEntityListToPojoListMapping.apply(blogStackUserPage.toList()))
                         .numberOfElements(blogStackUserPage.getNumberOfElements())
                         .pageSize(blogStackUserPage.getSize())
@@ -64,22 +66,22 @@ public class BlogStackUserService implements IBlogStackUserService {
     }
 
     @Override
-    public Optional<?> fetchUserById(String emailId) {
+    public ResponseEntity<?> fetchUserById(String emailId) {
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(emailId);
         LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);
 
-        if(blogStackUserOptional.isEmpty())
+        if (blogStackUserOptional.isEmpty())
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.DATA_NOT_FOUND);
 
         Set<BlogStackRoleDetail> roleDetails = new HashSet<>();
         roleDetails.addAll(this.blogStackRoleDetailRepository.findBlogStackRoleDetailsByBlogStackUsersBsuUserId(blogStackUserOptional.get().getBsuUserId()));
         blogStackUserOptional.get().setBlogStackRoleDetails(roleDetails);
 
-        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get())).build());
+        return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get())).build());
     }
 
     @Override
-    public Optional<?> updateUser(UserRequestBean userRequestBean) {
+    public ResponseEntity<?> updateUser(UserRequestBean userRequestBean) {
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(userRequestBean.getEmailId());
         LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);
 
@@ -91,26 +93,20 @@ public class BlogStackUserService implements IBlogStackUserService {
         LOGGER.debug("BlogStackUser :: {}", blogStackUser);
 
         this.blogStackUserRepository.saveAndFlush(blogStackUser);
-        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUser)).build());
+        return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUser)).build());
     }
 
     @Override
-    public Optional<?> deleteUser(String emailId) {
+    public ResponseEntity<?> deleteUser(String emailId) {
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(emailId);
         LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);
 
-        if(blogStackUserOptional.isEmpty())
+        if (blogStackUserOptional.isEmpty())
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.DATA_NOT_FOUND);
 
         blogStackUserOptional.get().setBsuStatus(UserStatusEnum.DELETE.getValue());
         blogStackUserOptional.get().setBsuModifiedBy(springApplicationName);
         this.blogStackUserRepository.saveAndFlush(blogStackUserOptional.get());
-        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).message(BlogStackMessageConstants.DATA_DELETED).build());
-    }
-
-    @Override
-    public Optional<?> updateUser(BlogStackUser blogStackUser) {
-        BlogStackUser UpdatedBlogStackUser = this.blogStackUserRepository.saveAndFlush(blogStackUser);
-        return Optional.of(UpdatedBlogStackUser);
+        return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).message(BlogStackMessageConstants.DATA_DELETED).build());
     }
 }

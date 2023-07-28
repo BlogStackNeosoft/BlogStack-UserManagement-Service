@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -39,12 +41,12 @@ public class BlogStackRoleDetailService implements IBlogStackRoleDetailService {
     private IBlogStackRoleDetailPojoEntityMapper blogStackRoleDetailPojoEntityMapper;
 
     @Override
-    public Optional<?> addRole(RoleRequestBean roleRequestBean) {
+    public ResponseEntity<?> addRole(RoleRequestBean roleRequestBean) {
         Optional<BlogStackRoleDetail> blogStackRoleDetailOptional = this.blogStackRoleDetailRepository.findByBrdRoleNameIgnoreCase(roleRequestBean.getRoleName());
         LOGGER.info("BlogStackRoleDetailOptional :: {}", blogStackRoleDetailOptional);
 
         if (blogStackRoleDetailOptional.isPresent())
-            throw new BlogStackDataNotFoundException(BlogStackMessageConstants.ROLE_ALREADY_EXIST);
+            throw new BlogStackDataNotFoundException(BlogStackMessageConstants.DATA_NOT_FOUND);
 
         String roleId = BlogStackCommonUtils.INSTANCE.uniqueIdentifier(UuidPrefixEnum.ROLE_ID.getValue());
         LOGGER.info("roleId :: {}", roleId);
@@ -53,29 +55,29 @@ public class BlogStackRoleDetailService implements IBlogStackRoleDetailService {
         roleRequestBean.setStatus(RoleStatusEnum.ACTIVE.getValue());
         roleRequestBean.setCreatedBy(this.springApplicationName);
         BlogStackRoleDetail blogStackRoleDetail = this.blogStackRoleDetailRepository.saveAndFlush(this.blogStackRoleDetailPojoEntityMapper.INSTANCE.rolePojoToRoleEntity(roleRequestBean));
-        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackRoleDetailEntityPojoMapper.mapRoleEntityPojoMapping.apply(blogStackRoleDetail)).build());
+        return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackRoleDetailEntityPojoMapper.mapRoleEntityPojoMapping.apply(blogStackRoleDetail)).build());
     }
 
     @Override
-    public Optional<?> fetchRoleByRoleName(String roleName) {
+    public ResponseEntity<?> fetchRoleByRoleName(String roleName) {
         Optional<BlogStackRoleDetail> blogStackRoleDetailOptional = this.blogStackRoleDetailRepository.findByBrdRoleNameIgnoreCase(roleName);
         LOGGER.info("BlogStackRoleDetailOptional :: {}", blogStackRoleDetailOptional);
 
-        if(blogStackRoleDetailOptional.isEmpty())
+        if (blogStackRoleDetailOptional.isEmpty())
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.DATA_NOT_FOUND);
 
-        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackRoleDetailEntityPojoMapper.mapRoleEntityPojoMapping.apply(blogStackRoleDetailOptional.get())).build());
+        return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackRoleDetailEntityPojoMapper.mapRoleEntityPojoMapping.apply(blogStackRoleDetailOptional.get())).build());
     }
 
     @Override
-    public Optional<?> fetchAllRole(Integer page, Integer size) {
+    public ResponseEntity<?> fetchAllRole(Integer page, Integer size) {
         Page<BlogStackRoleDetail> blogStackRoleDetailPage = this.blogStackRoleDetailRepository.findAll(PageRequest.of(page, size));
         LOGGER.debug("BlogStackRoleDetailPage :: {}", blogStackRoleDetailPage);
 
-        if(CollectionUtils.isEmpty(blogStackRoleDetailPage.toList()))
+        if (CollectionUtils.isEmpty(blogStackRoleDetailPage.toList()))
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.DATA_NOT_FOUND);
 
-        return Optional.of(ServiceResponseBean.builder()
+        return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder()
                 .status(Boolean.TRUE).data(PageResponseBean.builder().payload(IBlogStackRoleDetailEntityPojoMapper.mapRoleEntityListtoPojoListMapping.apply(blogStackRoleDetailPage.toList()))
                         .numberOfElements(blogStackRoleDetailPage.getNumberOfElements())
                         .pageSize(blogStackRoleDetailPage.getSize())
@@ -86,20 +88,20 @@ public class BlogStackRoleDetailService implements IBlogStackRoleDetailService {
     }
 
     @Override
-    public Optional<?> deleteRole(String roleName) {
+    public ResponseEntity<?> deleteRole(String roleName) {
         Optional<BlogStackRoleDetail> blogStackRoleDetailOptional = this.blogStackRoleDetailRepository.findByBrdRoleNameIgnoreCase(roleName);
         LOGGER.info("BlogStackRoleDetailOptional :: {}", blogStackRoleDetailOptional);
 
-        if(blogStackRoleDetailOptional.isEmpty())
+        if (blogStackRoleDetailOptional.isEmpty())
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.DATA_NOT_FOUND);
 
         blogStackRoleDetailOptional.get().setBrdStatus(RoleStatusEnum.DELETED.getValue());
         this.blogStackRoleDetailRepository.saveAndFlush(blogStackRoleDetailOptional.get());
-        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).message(BlogStackMessageConstants.DATA_DELETED).build());
+        return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).message(BlogStackMessageConstants.DATA_DELETED).build());
     }
 
     @Override
-    public Optional<?> updateRole(RoleRequestBean roleRequestBean) {
+    public ResponseEntity<?> updateRole(RoleRequestBean roleRequestBean) {
         Optional<BlogStackRoleDetail> blogStackRoleDetailOptional = this.blogStackRoleDetailRepository.findByBrdRoleNameIgnoreCase(roleRequestBean.getRoleName());
         LOGGER.debug("BlogStackRoleDetailOptional :: {}", blogStackRoleDetailOptional);
 
@@ -111,6 +113,6 @@ public class BlogStackRoleDetailService implements IBlogStackRoleDetailService {
         LOGGER.debug("BlogStackRoleDetail :: {}", blogStackRoleDetail);
 
         this.blogStackRoleDetailRepository.saveAndFlush(blogStackRoleDetail);
-        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackRoleDetailEntityPojoMapper.mapRoleEntityPojoMapping.apply(blogStackRoleDetail)).build());
+        return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackRoleDetailEntityPojoMapper.mapRoleEntityPojoMapping.apply(blogStackRoleDetail)).build());
     }
 }

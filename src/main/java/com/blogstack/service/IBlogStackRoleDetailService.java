@@ -1,19 +1,18 @@
 package com.blogstack.service;
 
 import com.blogstack.beans.request.RoleRequestBean;
-
-import java.util.Optional;
+import org.springframework.http.ResponseEntity;
 
 public interface IBlogStackRoleDetailService {
 
-    public Optional<?> addRole(RoleRequestBean roleRequestBean);
+    public ResponseEntity<?> addRole(RoleRequestBean roleRequestBean);
 
-    public Optional<?> fetchRoleByRoleName(String roleName);
+    public ResponseEntity<?> fetchRoleByRoleName(String roleName);
 
-    public Optional<?> fetchAllRole(Integer page, Integer size);
+    public ResponseEntity<?> fetchAllRole(Integer page, Integer size);
 
-    public Optional<?> updateRole(RoleRequestBean roleRequestBean);
+    public ResponseEntity<?> updateRole(RoleRequestBean roleRequestBean);
 
-    public Optional<?> deleteRole(String roleId);
+    public ResponseEntity<?> deleteRole(String roleId);
 
 }

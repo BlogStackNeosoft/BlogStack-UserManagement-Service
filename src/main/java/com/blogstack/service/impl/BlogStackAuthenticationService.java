@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,12 +55,13 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
     private IBlogStackRoleDetailRepository blogStackRoleDetailRepository;
 
     @Override
-    public Optional<?> signUp(SignUpRequestBean signUpRequestBean) throws IOException {
+    public ResponseEntity<?> signUp(SignUpRequestBean signUpRequestBean) throws IOException {
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(signUpRequestBean.getEmailId());
         LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);
 
         if (blogStackUserOptional.isPresent())
-            return Optional.of(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.EMAIL_ID_ALREADY_EXISTS).build());
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.EMAIL_ID_ALREADY_EXISTS).build());
 
         String userId = BlogStackCommonUtils.INSTANCE.uniqueIdentifier(UuidPrefixEnum.USER_ID.getValue());
         LOGGER.info("UserId :: {}", userId);
@@ -81,53 +84,54 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
 
         BlogStackUser blogStackUser = this.blogStackUserRepository.saveAndFlush(this.blogStackUserPojoEntityMapper.INSTANCE.userPojoToUserEntity(signUpRequestBean));
 
-        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).
-                message(BlogStackMessageConstants.USER_CREATED_SUCCESSFULLY)
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ServiceResponseBean.builder().status(Boolean.TRUE).
+                        message(BlogStackMessageConstants.USER_CREATED_SUCCESSFULLY)
                         .data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUser))
-                .build());
+                        .build());
     }
 
     @Override
-    public Optional<?> signIn(SignInRequestBean signInRequestBean) {
+    public ResponseEntity<?> signIn(SignInRequestBean signInRequestBean) {
         String accessToken, refreshToken;
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(signInRequestBean.getEmailId());
-        if (blogStackUserOptional.isEmpty()) {
+        if (blogStackUserOptional.isEmpty())
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_NOT_PRESENT);
-        }
         if (bCryptPasswordEncoder.matches(signInRequestBean.getPassword(), blogStackUserOptional.get().getBsuPassword())) {
             blogStackUserOptional.get().setBsuStatus(UserStatusEnum.ACTIVE.getValue());
             accessToken = this.jwtHelper.generateToken(signInRequestBean.getEmailId());
             refreshToken = this.jwtHelper.generateRefreshToken(signInRequestBean.getEmailId());
         } else {
-            return Optional.of(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.INCORRECT_PASSWORD).build());
+            return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.INCORRECT_PASSWORD).build());
         }
         this.blogStackUserRepository.saveAndFlush(blogStackUserOptional.get());
         Optional<BlogStackUser> blogStackUser = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(signInRequestBean.getEmailId());
         Set<String> roleName = blogStackUser.get().getBlogStackRoleDetails().stream().map(BlogStackRoleDetail::getBrdRoleName).collect(Collectors.toSet());
-        return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE)
-                .data(JwtResponseBean.builder()
-                        .userId(blogStackUserOptional.get().getBsuEmailId())
-                        .jwtToken(accessToken)
-                        .refreshToken(refreshToken)
-                        .blogStackRoleDetails(roleName)
-                        .build())
-                .build());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ServiceResponseBean.builder().status(Boolean.TRUE)
+                        .data(JwtResponseBean.builder()
+                                .userId(blogStackUserOptional.get().getBsuEmailId())
+                                .jwtToken(accessToken)
+                                .refreshToken(refreshToken)
+                                .blogStackRoleDetails(roleName)
+                                .build())
+                        .build());
     }
 
     @Override
-    public Optional<?> refreshTokens(String token) {
+    public ResponseEntity<?> refreshTokens(String token) {
         String email = jwtHelper.getSubject(token);
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(email);
         if (blogStackUserOptional.isEmpty())
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_NOT_PRESENT);
-        else if(blogStackUserOptional.isPresent() && jwtHelper.validateToken(token))
-        {
+        else if (blogStackUserOptional.isPresent() && jwtHelper.validateToken(token)) {
             String accessToken = this.jwtHelper.generateToken(email);
-            String refreshToken= this.jwtHelper.generateRefreshToken(email);
-            return Optional.of(ServiceResponseBean.builder().status(Boolean.TRUE).data(JwtResponseBean.builder().userId(blogStackUserOptional.get().getBsuEmailId()).jwtToken(accessToken).refreshToken(refreshToken).build()).build());
-        }
-        else
-            return Optional.of(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.INVALID_TOKEN).build());
+            String refreshToken = this.jwtHelper.generateRefreshToken(email);
+            return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).data(JwtResponseBean.builder().userId(blogStackUserOptional.get().getBsuEmailId()).jwtToken(accessToken).refreshToken(refreshToken).build()).build());
+        } else
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.INVALID_TOKEN).build());
     }
 
 

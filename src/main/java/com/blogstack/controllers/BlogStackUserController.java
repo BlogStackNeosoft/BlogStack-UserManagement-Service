@@ -12,9 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.io.IOException;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "${iam-service-version}/user")
@@ -29,34 +27,26 @@ public class BlogStackUserController {
 
     @GetMapping(value = "/{email_id}")
     public ResponseEntity<?> fetchUserById(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(this.blogStackUserService.fetchUserById(emailId));
+        return this.blogStackUserService.fetchUserById(emailId);
     }
 
     @GetMapping(value = "/")
     public ResponseEntity<?> fetchAllUser(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "2147483647") Integer size) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(this.blogStackUserService.fetchAll(page, size));
+        return this.blogStackUserService.fetchAll(page, size);
     }
 
     @PutMapping(value = "/")
-    public Optional<?> updateUser(@Valid @RequestBody UserRequestBean userRequestBean) {
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UserRequestBean userRequestBean) {
         return this.blogStackUserService.updateUser(userRequestBean);
     }
 
     @DeleteMapping(value = "/{email_id}")
     public ResponseEntity<?> deleteUser(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(this.blogStackUserService.deleteUser(emailId));
+        return this.blogStackUserService.deleteUser(emailId);
     }
 
-    @PostMapping(value = "/profile-photo/{email_id}")
+    @PutMapping(value = "/profile-photo/{email_id}")
     public ResponseEntity<?> updateProfilePhoto(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId, @RequestParam(value = "profile_pic")MultipartFile profilePic) throws IOException {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(this.blogStackS3BucketProfilePhotoUploadService.uploadProfilePhoto(emailId,profilePic));
+        return this.blogStackS3BucketProfilePhotoUploadService.uploadProfilePhoto(emailId,profilePic);
     }
 }
