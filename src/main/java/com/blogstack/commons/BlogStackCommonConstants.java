@@ -14,4 +14,6 @@ public enum BlogStackCommonConstants {
 
 	public static final String DOB_DATE_FORMAT = "yyyy-MM-dd";
 
+	public static final String ROLE_CONSTANT = "roles";
+
 }

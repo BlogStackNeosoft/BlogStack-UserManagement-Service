@@ -100,7 +100,7 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_NOT_PRESENT);
         if (bCryptPasswordEncoder.matches(signInRequestBean.getPassword(), blogStackUserOptional.get().getBsuPassword())) {
             blogStackUserOptional.get().setBsuStatus(UserStatusEnum.ACTIVE.getValue());
-            accessToken = this.jwtHelper.generateToken(signInRequestBean.getEmailId());
+            accessToken = this.jwtHelper.generateToken(signInRequestBean.getEmailId(),blogStackUserOptional.get().getBlogStackRoleDetails());
             refreshToken = this.jwtHelper.generateRefreshToken(signInRequestBean.getEmailId());
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.INCORRECT_PASSWORD).build());
@@ -126,7 +126,7 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         if (blogStackUserOptional.isEmpty())
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_NOT_PRESENT);
         else if (blogStackUserOptional.isPresent() && jwtHelper.validateToken(token)) {
-            String accessToken = this.jwtHelper.generateToken(email);
+            String accessToken = this.jwtHelper.generateToken(email,blogStackUserOptional.get().getBlogStackRoleDetails());
             String refreshToken = this.jwtHelper.generateRefreshToken(email);
             return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).data(JwtResponseBean.builder().userId(blogStackUserOptional.get().getBsuEmailId()).jwtToken(accessToken).refreshToken(refreshToken).build()).build());
         } else

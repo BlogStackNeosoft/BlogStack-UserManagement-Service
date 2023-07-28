@@ -1,14 +1,16 @@
 package com.blogstack.helper;
 
+import com.blogstack.commons.BlogStackCommonConstants;
+import com.blogstack.entities.BlogStackRoleDetail;
+import com.blogstack.entities.BlogStackUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtHelper {
@@ -48,8 +50,13 @@ public class JwtHelper {
     }
 
     //generate token for user
-    public String generateToken(String emailId) {
+    public String generateToken(String emailId, Set<BlogStackRoleDetail> blogStackRoleDetails) {
         Map<String, Object> claims = new HashMap<>();
+        List<String> blogStackUserRoles = blogStackRoleDetails.stream()
+                                         .map(roleDetails -> roleDetails.getBrdRoleName())
+                                         .collect(Collectors.toList());
+
+        claims.put(BlogStackCommonConstants.ROLE_CONSTANT,blogStackUserRoles);
         return doGenerateToken(claims, emailId);
     }
 
