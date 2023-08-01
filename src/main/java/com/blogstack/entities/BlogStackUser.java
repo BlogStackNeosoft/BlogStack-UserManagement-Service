@@ -16,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 @EqualsAndHashCode(exclude = "blogStackRoleDetails")
 @Table(name = "blogstack_user", schema = "user_management")
 public class BlogStackUser {

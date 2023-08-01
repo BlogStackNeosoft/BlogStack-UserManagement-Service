@@ -13,7 +13,7 @@ import java.io.IOException;
 @RestController
 
 @RequestMapping(path = "${iam-service-version}/authentication")
-@CrossOrigin("*")
+//@CrossOrigin("*")
 public class BlogStackAuthenticationController {
 
     @Autowired
