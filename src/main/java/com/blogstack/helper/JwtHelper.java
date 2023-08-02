@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class JwtHelper {
 
     //requirement :
-    public static final long JWT_TOKEN_VALIDITY =  1000 * 60 * 1;
+    public static final long JWT_TOKEN_VALIDITY =  1000 * 60 * 15;
 
     public static final long JWT_REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 24;
 
