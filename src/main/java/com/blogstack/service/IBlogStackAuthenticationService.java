@@ -8,10 +8,10 @@ import java.io.IOException;
 
 public interface IBlogStackAuthenticationService {
 
-    public ResponseEntity<?> signUp(SignUpRequestBean signUpRequestBean) throws IOException;
+     ResponseEntity<?> signUp(SignUpRequestBean signUpRequestBean) throws IOException;
 
-    public ResponseEntity<?> signIn(SignInRequestBean signInRequestBean);
+     ResponseEntity<?> signIn(SignInRequestBean signInRequestBean);
 
-    public ResponseEntity<?> refreshTokens(String refreshToken);
+     ResponseEntity<?> refreshTokens(String refreshToken);
 
 }

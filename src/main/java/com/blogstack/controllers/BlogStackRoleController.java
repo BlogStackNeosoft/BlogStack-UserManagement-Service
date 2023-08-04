@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "${iam-service-version}/role")
-@CrossOrigin("*")
+// @CrossOrigin("*")
 public class BlogStackRoleController {
 
     @Autowired
