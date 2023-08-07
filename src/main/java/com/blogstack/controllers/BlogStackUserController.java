@@ -2,8 +2,10 @@ package com.blogstack.controllers;
 
 import com.blogstack.beans.request.UserRequestBean;
 import com.blogstack.commons.BlogStackMessageConstants;
+import com.blogstack.service.IBlogStackAuthenticationService;
 import com.blogstack.service.IBlogStackS3BucketPhotoUploadService;
 import com.blogstack.service.IBlogStackUserService;
+import com.blogstack.service.impl.BlogStackAuthenticationService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +18,23 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping(path = "${iam-service-version}/user")
-//@CrossOrigin("*")
+
+// @CrossOrigin("*")
+
 public class BlogStackUserController {
 
-    @Autowired
+
     private IBlogStackUserService blogStackUserService;
+    private IBlogStackS3BucketPhotoUploadService blogStackS3BucketProfilePhotoUploadService;
+    private IBlogStackAuthenticationService blogStackAuthenticationService;
 
     @Autowired
-    private IBlogStackS3BucketPhotoUploadService blogStackS3BucketProfilePhotoUploadService;
+    public BlogStackUserController(IBlogStackUserService blogStackUserService, IBlogStackS3BucketPhotoUploadService blogStackS3BucketProfilePhotoUploadService, IBlogStackAuthenticationService blogStackAuthenticationService) {
+        this.blogStackUserService = blogStackUserService;
+        this.blogStackS3BucketProfilePhotoUploadService = blogStackS3BucketProfilePhotoUploadService;
+        this.blogStackAuthenticationService = blogStackAuthenticationService;
+
+    }
 
     @GetMapping(value = "/{email_id}")
     public ResponseEntity<?> fetchUserById(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId) {
@@ -48,5 +59,10 @@ public class BlogStackUserController {
     @PutMapping(value = "/profile-photo/{email_id}")
     public ResponseEntity<?> updateProfilePhoto(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId, @RequestParam(value = "profile_pic")MultipartFile profilePic) throws IOException {
         return this.blogStackS3BucketProfilePhotoUploadService.uploadProfilePhoto(emailId,profilePic);
+    }
+
+    @PostMapping(value = "/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam("email") String blogStackUserEmail, @RequestParam("uid") String blogStackUserId){
+        return this.blogStackAuthenticationService.forgotPasswordEmailGeneration(blogStackUserEmail,blogStackUserId);
     }
 }
