@@ -14,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
+@ToString
 @Table(name = "blogstack_role_detail", schema = "user_management")
 public class BlogStackRoleDetail {
 

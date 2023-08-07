@@ -18,7 +18,9 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping(path = "${iam-service-version}/user")
+
 // @CrossOrigin("*")
+
 public class BlogStackUserController {
 
 
