@@ -19,6 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@CacheConfig(cacheNames = "blogstack-user-management")
 @Transactional
 public class BlogStackUserService implements IBlogStackUserService {
 
@@ -66,6 +70,7 @@ public class BlogStackUserService implements IBlogStackUserService {
     }
 
     @Override
+    @Cacheable(key = "#emailId")
     public ResponseEntity<?> fetchUserById(String emailId) {
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(emailId);
         LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);
@@ -81,6 +86,7 @@ public class BlogStackUserService implements IBlogStackUserService {
     }
 
     @Override
+    @CachePut(key = "#userRequestBean", value = "blogstack-user-management")
     public ResponseEntity<?> updateUser(UserRequestBean userRequestBean) {
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(userRequestBean.getEmailId());
         LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);

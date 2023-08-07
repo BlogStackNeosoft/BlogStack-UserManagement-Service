@@ -1,14 +1,13 @@
 package com.blogstack.service.impl;
 
+import com.blogstack.beans.redis.BlogStackForgotPasswordBean;
 import com.blogstack.beans.request.SignInRequestBean;
 import com.blogstack.beans.request.SignUpRequestBean;
 import com.blogstack.beans.response.JwtResponseBean;
 import com.blogstack.beans.response.ServiceResponseBean;
-import com.blogstack.commons.BlogStackCommonConstants;
 import com.blogstack.commons.BlogStackMessageConstants;
 import com.blogstack.entities.BlogStackRoleDetail;
 import com.blogstack.entities.BlogStackUser;
-import com.blogstack.enums.RoleStatusEnum;
 import com.blogstack.enums.UserStatusEnum;
 import com.blogstack.enums.UuidPrefixEnum;
 import com.blogstack.exceptions.BlogStackDataNotFoundException;
@@ -18,6 +17,7 @@ import com.blogstack.mappers.pojo.entity.IBlogStackUserPojoEntityMapper;
 import com.blogstack.repository.IBlogStackRoleDetailRepository;
 import com.blogstack.repository.IBlogStackUserRepository;
 import com.blogstack.service.IBlogStackAuthenticationService;
+import com.blogstack.repository.IBlogStackRedisOprationsService;
 import com.blogstack.utils.BlogStackCommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -31,8 +31,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.HashSet;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,24 +40,25 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BlogStackAuthenticationService implements IBlogStackAuthenticationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    @Autowired
-    private JwtHelper jwtHelper;
 
     @Value("#{'${spring.application.name}'.toUpperCase()}")
     private String springApplicationName;
-
-    @Autowired
+    private JwtHelper jwtHelper;
     private IBlogStackUserRepository blogStackUserRepository;
-
-    @Autowired
     private IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper;
-
-    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private IBlogStackRoleDetailRepository blogStackRoleDetailRepository;
+    private IBlogStackRedisOprationsService redisOprationsService;
 
     @Autowired
-    private IBlogStackRoleDetailRepository blogStackRoleDetailRepository;
-
+    public BlogStackAuthenticationService(JwtHelper jwtHelper, IBlogStackUserRepository blogStackUserRepository, IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper, BCryptPasswordEncoder bCryptPasswordEncoder, IBlogStackRoleDetailRepository blogStackRoleDetailRepository, IBlogStackRedisOprationsService redisOprationsService) {
+        this.jwtHelper = jwtHelper;
+        this.blogStackUserRepository = blogStackUserRepository;
+        this.blogStackUserPojoEntityMapper = blogStackUserPojoEntityMapper;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.blogStackRoleDetailRepository = blogStackRoleDetailRepository;
+        this.redisOprationsService = redisOprationsService;
+    }
 
     @Override
     public ResponseEntity<?> signUp(SignUpRequestBean signUpRequestBean) throws IOException {
@@ -152,8 +153,35 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         if(foundBlogStackUser.isEmpty())
             throw new BlogStackDataNotFoundException("The user does not exist in database");
         else {
-            log.info("Generate an otp and send to the user");
+
+            log.info("Before Sending data to redis");
+            BlogStackForgotPasswordBean blogStackFogotPasswordBean = BlogStackForgotPasswordBean.builder()
+                    .email(foundBlogStackUser.get().getBsuEmailId())
+                    .otp(String.valueOf(new Random().nextInt(99999)))
+                    .build();
+            this.redisOprationsService.saveEmailAndOtp(blogStackFogotPasswordBean);
+            log.info("otp: {}",blogStackFogotPasswordBean.getOtp());
+            // send a mail with the generated otp
+
             return new ResponseEntity<>(null, HttpStatus.OK);
         }
     }
+
+    @Override
+    public ResponseEntity<?> blogStackValidateOtp(BlogStackForgotPasswordBean blogStackForgotPasswordBean) {
+        Optional<BlogStackForgotPasswordBean> foundObjectWithOtp = this.redisOprationsService.getOtpById(blogStackForgotPasswordBean.getEmail());
+        if(foundObjectWithOtp.isPresent())
+        {
+            if(foundObjectWithOtp.get().getOtp().equals(blogStackForgotPasswordBean.getOtp()))
+                return new ResponseEntity<>(ServiceResponseBean.builder()
+                        .status(Boolean.TRUE)
+                        .message("user validated")
+                        .build(),HttpStatus.OK);
+        }
+
+        throw new BlogStackDataNotFoundException("OTP of user not found");
+    }
+
 }
+
+

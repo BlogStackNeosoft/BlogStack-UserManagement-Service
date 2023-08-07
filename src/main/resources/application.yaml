@@ -1,4 +1,12 @@
 spring:
+  cache:
+    redis:
+      time-to-live: 5000000
+      cache-names: blogstack-user-management
+      key-prefix: blogstack
+  redis:
+    host: ec2-3-110-224-124.ap-south-1.compute.amazonaws.com
+    port: 6379
   main:
     allow-bean-definition-overriding: true
   application:
