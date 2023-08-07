@@ -1,5 +1,6 @@
 package com.blogstack.controllers;
 
+import com.blogstack.beans.redis.BlogStackForgotPasswordBean;
 import com.blogstack.beans.request.UserRequestBean;
 import com.blogstack.commons.BlogStackMessageConstants;
 import com.blogstack.service.IBlogStackAuthenticationService;
@@ -64,5 +65,9 @@ public class BlogStackUserController {
     @PostMapping(value = "/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestParam("email") String blogStackUserEmail, @RequestParam("uid") String blogStackUserId){
         return this.blogStackAuthenticationService.forgotPasswordEmailGeneration(blogStackUserEmail,blogStackUserId);
+    }
+    @PostMapping(value = "/validate-otp")
+    public ResponseEntity<?> validateOtp(@RequestBody BlogStackForgotPasswordBean forgotPasswordBean){
+        return this.blogStackAuthenticationService.blogStackValidateOtp(forgotPasswordBean);
     }
 }

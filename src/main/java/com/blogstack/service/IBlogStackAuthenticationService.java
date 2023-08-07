@@ -1,5 +1,6 @@
 package com.blogstack.service;
 
+import com.blogstack.beans.redis.BlogStackForgotPasswordBean;
 import com.blogstack.beans.request.SignInRequestBean;
 import com.blogstack.beans.request.SignUpRequestBean;
 import org.springframework.http.ResponseEntity;
@@ -15,5 +16,7 @@ public interface IBlogStackAuthenticationService {
      ResponseEntity<?> refreshTokens(String refreshToken);
 
      ResponseEntity<?> forgotPasswordEmailGeneration(String blogStackUserEmail, String blogStackUserId);
+
+     ResponseEntity<?> blogStackValidateOtp(BlogStackForgotPasswordBean blogStackForgotPasswordBean);
 
 }

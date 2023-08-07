@@ -15,9 +15,9 @@ import java.io.IOException;
 @RequestMapping(path = "${iam-service-version}/authentication")
 
 // @CrossOrigin("*")
-public class BlogStackAuthenticationController {
+    public class BlogStackAuthenticationController {
 
-    @Autowired
+        @Autowired
     private IBlogStackAuthenticationService blogStackAuthenticationService;
 
     @PostMapping("/sign-up/")
