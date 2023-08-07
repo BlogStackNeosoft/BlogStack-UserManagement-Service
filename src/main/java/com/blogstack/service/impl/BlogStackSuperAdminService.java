@@ -2,6 +2,7 @@ package com.blogstack.service.impl;
 
 import com.blogstack.beans.request.SignUpRequestBean;
 import com.blogstack.beans.response.ServiceResponseBean;
+import com.blogstack.beans.response.UserResponseBean;
 import com.blogstack.commons.BlogStackMessageConstants;
 import com.blogstack.entities.BlogStackRoleDetail;
 import com.blogstack.entities.BlogStackUser;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -98,11 +100,17 @@ public class BlogStackSuperAdminService implements IBlogStackSuperAdminService {
         // List<BlogStackUser> byBlogStackRoleDetails = this.blogStackUserRepository.findByBlogStackRoleDetails(blogStackRoleDetails.get());
         List<BlogStackUser> foundBlogStackAdmin = this.blogStackUserRepository.findBlogStackUserByBlogStackRoleDetailsBrdRoleId(blogStackRoleDetails.get().getBrdRoleId());
 
-        if(foundBlogStackAdmin == null)
-            log.info("Null value");
         // transfering the list object of entity into list objects of pojo
 
+        Set<UserResponseBean> collect = foundBlogStackAdmin.stream()
+                .map(item -> this.blogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(item))
+                .collect(Collectors.toSet());
+
         log.info("Before returning the data from the service layer");
-        return new ResponseEntity<>(foundBlogStackAdmin,HttpStatus.OK);
+        return ResponseEntity.ok()
+                .body(ServiceResponseBean
+                        .builder()
+                        .status(Boolean.TRUE)
+                        .data(collect));
     }
 }

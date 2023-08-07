@@ -122,7 +122,7 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ServiceResponseBean.builder().status(Boolean.TRUE)
                         .data(JwtResponseBean.builder()
-                                .userId(blogStackUserOptional.get().getBsuEmailId())
+                                .userId(blogStackUserOptional.get().getBsuUserId())
                                 .jwtToken(accessToken)
                                 .refreshToken(refreshToken)
                                 .blogStackRoleDetails(roleName)
@@ -142,5 +142,18 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         } else
             return ResponseEntity.status(HttpStatus.OK)
                     .body(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.INVALID_TOKEN).build());
+    }
+
+    @Override
+    public ResponseEntity<?> forgotPasswordEmailGeneration(String blogStackUserEmail, String blogStackUserId) {
+
+        // firstCheckUserExistWith given email and id
+        Optional<BlogStackUser> foundBlogStackUser = this.blogStackUserRepository.findByBsuUserIdAndBsuEmailId(blogStackUserId, blogStackUserEmail);
+        if(foundBlogStackUser.isEmpty())
+            throw new BlogStackDataNotFoundException("The user does not exist in database");
+        else {
+            log.info("Generate an otp and send to the user");
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }
     }
 }

@@ -14,4 +14,6 @@ public interface IBlogStackAuthenticationService {
 
      ResponseEntity<?> refreshTokens(String refreshToken);
 
+     ResponseEntity<?> forgotPasswordEmailGeneration(String blogStackUserEmail, String blogStackUserId);
+
 }
