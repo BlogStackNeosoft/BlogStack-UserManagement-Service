@@ -13,10 +13,11 @@ import java.io.IOException;
 @RestController
 
 @RequestMapping(path = "${iam-service-version}/authentication")
-//@CrossOrigin("*")
-public class BlogStackAuthenticationController {
 
-    @Autowired
+// @CrossOrigin("*")
+    public class BlogStackAuthenticationController {
+
+        @Autowired
     private IBlogStackAuthenticationService blogStackAuthenticationService;
 
     @PostMapping("/sign-up/")
@@ -29,8 +30,9 @@ public class BlogStackAuthenticationController {
         return this.blogStackAuthenticationService.signIn(signInRequestBean);
     }
 
-    @PostMapping(value = "/refresh-token/{token}")
-    public ResponseEntity<?> refreshToken(@PathVariable String token){
+    @PostMapping(value = "/refresh-token/")
+    public ResponseEntity<?> refreshToken(@RequestParam("token") String token){
         return this.blogStackAuthenticationService.refreshTokens(token);
     }
+
 }

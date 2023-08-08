@@ -33,4 +33,8 @@ public enum BlogStackMessageConstants {
     public static final String EMAIL_ID_ALREADY_EXISTS = "Email Id Already Exists";
     public static final String INVALID_TOKEN = "Invalid token";
     public static final String USER_CREATED_SUCCESSFULLY = "User created successfully";
+
+    public static final String USER_DEFAULT_ROLE = "user";
+
+    public static final String ADMIN_ROLE = "admin";
 }
