@@ -1,6 +1,7 @@
 package com.blogstack.beans.response;
 
 import com.blogstack.commons.BlogStackCommonConstants;
+import com.blogstack.entities.BlogStackRoleDetail;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -40,8 +42,8 @@ public class UserResponseBean {
     @JsonProperty(value = "phone_number")
     private String phoneNumber;
 
-    @JsonProperty(value = "password")
-    private String password;
+    @JsonProperty(value = "user_roles")
+    private Set<BlogStackRoleDetail> blogStackRoleDetails;
 
     @JsonProperty(value = "status")
     private String status;

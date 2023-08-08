@@ -16,13 +16,9 @@ import java.util.Set;
 @AllArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class ServiceResponseBean {
-	
 	private String message;
- 
 	@Default
 	private Boolean status = Boolean.FALSE;
-	
 	private Object data;
-	
 	private Set<String> errors;
 }

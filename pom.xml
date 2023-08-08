@@ -9,15 +9,16 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.blogstack</groupId>
-    <artifactId>BlogStackIAMService</artifactId>
+    <artifactId>BlogStackUserManagementService</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>BlogStackIAMService</name>
-    <description>BlogStackIAMService</description>
+    <name>BlogStackUserManagementService</name>
+    <description>BlogStackUserManagementService</description>
     <properties>
-        <java.version>20</java.version>
+        <java.version>17</java.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mapstruct-processor.version>1.5.5.Final</mapstruct-processor.version>
         <commons-collections4.version>4.4</commons-collections4.version>
+        <spring-cloud.version>2022.0.4</spring-cloud.version>
     </properties>
     <dependencies>
         <dependency>
@@ -30,27 +31,19 @@
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-api</artifactId>
-            <version>0.11.5</version>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
         </dependency>
         <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-impl</artifactId>
-            <version>0.11.5</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.5</version>
-            <scope>runtime</scope>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
             <version>6.1.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
@@ -96,6 +89,10 @@
             <version>${mapstruct-processor.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.0.2</version>
@@ -106,8 +103,43 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
-    </dependencies>
+        <dependency>
+            <groupId>aws.sdk.kotlin</groupId>
+            <artifactId>aws-core-jvm</artifactId>
+            <version>0.26.0-beta</version>
+        </dependency>
 
+
+
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.11.133</version>
+        </dependency>
+
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>4.4.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>
@@ -123,7 +155,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>blogstackiamservice</finalName>
+        <finalName>user-management-service</finalName>
     </build>
 
 </project>

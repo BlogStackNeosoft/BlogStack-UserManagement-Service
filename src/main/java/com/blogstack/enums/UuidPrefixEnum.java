@@ -8,7 +8,9 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public enum UuidPrefixEnum {
-    USER_ID("USER_ID_");
+    USER_ID("USER_ID_"),
+
+    ROLE_ID("ROLE_ID_");
 
     @Getter
     private String value;

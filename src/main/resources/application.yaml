@@ -1,56 +1,40 @@
 spring:
+  cache:
+    redis:
+      time-to-live: 5000000
+      cache-names: blogstack-user-management
+      key-prefix: blogstack
+  redis:
+    host: ec2-3-110-224-124.ap-south-1.compute.amazonaws.com
+    port: 6379
   main:
     allow-bean-definition-overriding: true
   application:
-    name: ${MASTER_SERVICE_APPLICATION_NAME:BlogStackIAMService}
-  profiles.active: local
-  webflux:
-    base-path: ${MASTER_SERVICE_BASE_PATH:/iam-management}
-  security:
-    user:
-      name: Test
-      password: Test
-
+    name: BlogStackIAMService
   datasource:
-    url: jdbc:postgresql://ec2-18-212-53-8.compute-1.amazonaws.com:5432/BlogStackIAMService
+    url: jdbc:postgresql://ec2-3-110-224-124.ap-south-1.compute.amazonaws.com:5432/blogstackusermanagement
     username: postgres
     password: root
-    hikari:
-      minimum-idle: ${MASTER_SERVICE_DATABASE_INITIAL_POOL_SIZE:5}
-      maximum-pool-size: ${MASTER_SERVICE_DATABASE_MAXIMUM_POOL_SIZE:20}
-      idle-timeout: 30000
-      pool-name: ${MASTER_SERVICE_DATABASE_POOL_NAME:MasterServicePool}
-      max-lifetime: 2000000
-      auto-commit: false
-      connection-timeout: 30000
-      connection-test-query: SELECT 1
   jpa:
     hibernate:
       ddl-auto: update
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     show-sql: true
-#  liquibase:
-#    change-log: classpath:db/changelog/changelog.sql
-#    url: ${MASTER_SERVICE_DATABASE_LIQUIBASE_URL:jdbc:postgresql://sudais-master-mvp-dev.cwgicxdi768g.me-central-1.rds.amazonaws.com/sudais-admin}
-#    user: ${MASTER_SERVICE_DATABASE_USERNAME:sudais_admin}
-#    password: ${MASTER_SERVICE_DATABASE_PASSWORD:alSuDa!s#2023}
-#    database-change-log-table: databasechangelog_alsudais_master_service
-#    database-change-log-lock-table: databasechangeloglock_alsudais_master_service
-
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 server:
-  port: ${MASTER_SERVICE_PORT:9091}
-  error.whitelabel.enabled: false
-  http2.enabled: ${HTTP2_ENABLE:true}
-
-#
-#management:
-#  health:
-#    defaults:
-#      enabled: false
-#  endpoints:
-#    web:
-#      exposure:
-#        include: "*"
+  port: 9095
 
 iam-service-version: v1.0
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIAXFYS2UY4HNPCI35G
+      secret-key: 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
+    region:
+      static: us-east-1
+    stack:
+      auto: false
+
+application:
+  bucket:
+    name: blogstack-profile-photo

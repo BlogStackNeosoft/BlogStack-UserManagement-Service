@@ -1,15 +1,22 @@
 package com.blogstack.service;
 
+import com.blogstack.beans.redis.BlogStackForgotPasswordBean;
 import com.blogstack.beans.request.SignInRequestBean;
 import com.blogstack.beans.request.SignUpRequestBean;
-import reactor.core.publisher.Mono;
+import org.springframework.http.ResponseEntity;
 
-import java.util.Optional;
+import java.io.IOException;
 
 public interface IBlogStackAuthenticationService {
 
-    public Mono<?> signUp(SignUpRequestBean signUpRequestBean);
+     ResponseEntity<?> signUp(SignUpRequestBean signUpRequestBean) throws IOException;
 
-    public Mono<?> signIn(SignInRequestBean signInRequestBean);
+     ResponseEntity<?> signIn(SignInRequestBean signInRequestBean);
+
+     ResponseEntity<?> refreshTokens(String refreshToken);
+
+     ResponseEntity<?> forgotPasswordEmailGeneration(String blogStackUserEmail, String blogStackUserId);
+
+     ResponseEntity<?> blogStackValidateOtp(BlogStackForgotPasswordBean blogStackForgotPasswordBean);
 
 }

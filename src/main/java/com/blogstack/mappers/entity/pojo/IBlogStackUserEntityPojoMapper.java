@@ -26,6 +26,7 @@ public interface IBlogStackUserEntityPojoMapper {
             @Mapping(target = "gender", source = "blogStackUser.bsuGender"),
             @Mapping(target = "phoneNumber", source = "blogStackUser.bsuPhoneNumber"),
             @Mapping(target = "dateOfBirth", source = "blogStackUser.bsuDateOfBirth"),
+            @Mapping(target = "blogStackRoleDetails", source = "blogStackUser.blogStackRoleDetails"),
             @Mapping(target = "profilePhoto", source = "blogStackUser.bsuProfilePhoto"),
             @Mapping(target = "status", source = "blogStackUser.bsuStatus"),
     })
@@ -43,6 +44,7 @@ public interface IBlogStackUserEntityPojoMapper {
                         .gender(blogStackUser.getBsuGender())
                         .phoneNumber(blogStackUser.getBsuPhoneNumber())
                         .dateOfBirth(blogStackUser.getBsuDateOfBirth())
+                        .blogStackRoleDetails(blogStackUser.getBlogStackRoleDetails())
                         .profilePhoto(blogStackUser.getBsuProfilePhoto())
                         .status(blogStackUser.getBsuStatus());
                 return userResponseBeanBuilder.build();

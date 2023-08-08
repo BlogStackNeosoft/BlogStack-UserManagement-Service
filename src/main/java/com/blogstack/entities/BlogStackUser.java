@@ -1,11 +1,7 @@
 package com.blogstack.entities;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -13,13 +9,16 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "blogstack_user", schema = "iam_management")
+@ToString
+@EqualsAndHashCode(exclude = "blogStackRoleDetails")
+@Table(name = "blogstack_user", schema = "user_management")
 public class BlogStackUser {
 
     @Id
@@ -63,6 +62,13 @@ public class BlogStackUser {
 
     @Column(name = "bsu_profile_photo")
     private String bsuProfilePhoto;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "blogstack_user_role_mapping", schema = "user_management",
+            joinColumns = @JoinColumn(name = "bsu_user_id", referencedColumnName = "bsu_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "brd_role_id", referencedColumnName = "brd_role_id"))
+    private Set<BlogStackRoleDetail> blogStackRoleDetails;
 
     @CreatedBy
     @Column(name = "bsu_created_by")
