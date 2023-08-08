@@ -10,6 +10,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 @EnableCaching
 @EnableRedisRepositories
 @EnableFeignClients
+@SpringBootApplication
 public class BlogStackUserManagementService {
 
     public static void main(String[] args) {

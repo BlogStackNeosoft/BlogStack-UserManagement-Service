@@ -115,6 +115,7 @@
             <version>1.11.133</version>
         </dependency>
 
+
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
@@ -126,6 +127,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+
     </dependencies>
     <dependencyManagement>
         <dependencies>

@@ -30,7 +30,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
@@ -65,7 +64,6 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         this.blogStackEmailFeignService=blogStackEmailFeignService;
         this.threadPoolTaskExecutor=threadPoolTaskExecutor;
     }
-
     @Override
     public ResponseEntity<?> signUp(SignUpRequestBean signUpRequestBean) throws IOException {
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(signUpRequestBean.getEmailId());
@@ -93,6 +91,8 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         Optional<BlogStackRoleDetail> blogStackRoleDetailsByRoleName = this.blogStackRoleDetailRepository.findByBrdRoleNameIgnoreCase(BlogStackMessageConstants.USER_DEFAULT_ROLE);
         log.info(String.format("Role: %s",blogStackRoleDetailsByRoleName.isPresent()));
 
+
+
         signUpRequestBean.setUserId(userId);
         signUpRequestBean.setStatus(UserStatusEnum.INACTIVE.getValue());
         signUpRequestBean.setCreatedBy(springApplicationName);
@@ -101,6 +101,10 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
                                                     .collect(Collectors.toSet()));
 
         BlogStackUser blogStackUser = this.blogStackUserRepository.saveAndFlush(this.blogStackUserPojoEntityMapper.INSTANCE.userPojoToUserEntity(signUpRequestBean));
+        CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(()->{
+            blogStackEmailFeignService.sendMessage(blogStackUser.getBsuEmailId(),blogStackUser.getBsuFirstName());
+            LOGGER.info(Thread.currentThread().getName());
+        },threadPoolTaskExecutor);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
