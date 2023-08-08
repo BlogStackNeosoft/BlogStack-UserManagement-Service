@@ -5,7 +5,6 @@ import com.blogstack.beans.request.SignUpRequestBean;
 import com.blogstack.beans.response.JwtResponseBean;
 import com.blogstack.beans.response.ServiceResponseBean;
 import com.blogstack.commons.BlogStackMessageConstants;
-import com.blogstack.configs.TaskExecutorConfig;
 import com.blogstack.entities.BlogStackRoleDetail;
 import com.blogstack.entities.BlogStackUser;
 import com.blogstack.enums.RoleStatusEnum;
@@ -29,10 +28,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -86,9 +83,6 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
                             .build());
         }).collect(Collectors.toSet());
 
-       /* //By Default Role should be assigned user
-        Set<BlogStackRoleDetail> blogStackRoleDetailsSet= new HashSet<>();
-        blogStackRoleDetailRepository.findByBrdRoleName*/
 
 
         signUpRequestBean.setUserId(userId);
