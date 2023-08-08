@@ -11,6 +11,7 @@ import com.blogstack.entities.BlogStackUser;
 import com.blogstack.enums.UserStatusEnum;
 import com.blogstack.enums.UuidPrefixEnum;
 import com.blogstack.exceptions.BlogStackDataNotFoundException;
+import com.blogstack.feign.client.IBlogStackEmailFeignService;
 import com.blogstack.helper.JwtHelper;
 import com.blogstack.mappers.entity.pojo.IBlogStackUserEntityPojoMapper;
 import com.blogstack.mappers.pojo.entity.IBlogStackUserPojoEntityMapper;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,15 +52,18 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private IBlogStackRoleDetailRepository blogStackRoleDetailRepository;
     private IBlogStackRedisOprationsService redisOprationsService;
-
+    private IBlogStackEmailFeignService blogStackEmailFeignService;
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
     @Autowired
-    public BlogStackAuthenticationService(JwtHelper jwtHelper, IBlogStackUserRepository blogStackUserRepository, IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper, BCryptPasswordEncoder bCryptPasswordEncoder, IBlogStackRoleDetailRepository blogStackRoleDetailRepository, IBlogStackRedisOprationsService redisOprationsService) {
+    public BlogStackAuthenticationService(JwtHelper jwtHelper, IBlogStackUserRepository blogStackUserRepository, IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper, BCryptPasswordEncoder bCryptPasswordEncoder, IBlogStackRoleDetailRepository blogStackRoleDetailRepository, IBlogStackRedisOprationsService redisOprationsService,IBlogStackEmailFeignService blogStackEmailFeignService,ThreadPoolTaskExecutor threadPoolTaskExecutor) {
         this.jwtHelper = jwtHelper;
         this.blogStackUserRepository = blogStackUserRepository;
         this.blogStackUserPojoEntityMapper = blogStackUserPojoEntityMapper;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.blogStackRoleDetailRepository = blogStackRoleDetailRepository;
         this.redisOprationsService = redisOprationsService;
+        this.blogStackEmailFeignService=blogStackEmailFeignService;
+        this.threadPoolTaskExecutor=threadPoolTaskExecutor;
     }
 
     @Override
@@ -162,6 +168,10 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
             this.redisOprationsService.saveEmailAndOtp(blogStackFogotPasswordBean);
             log.info("otp: {}",blogStackFogotPasswordBean.getOtp());
             // send a mail with the generated otp
+
+            CompletableFuture<Void> asyncEmailCall = CompletableFuture.runAsync(()->{
+                this.blogStackEmailFeignService.sendOTP(blogStackUserEmail,blogStackFogotPasswordBean.getOtp());
+            },this.threadPoolTaskExecutor);
 
             return new ResponseEntity<>(null, HttpStatus.OK);
         }
