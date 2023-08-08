@@ -37,4 +37,4 @@ cloud:
 
 application:
   bucket:
-    name: blogstackprofilephoto
+    name: blogstack-profile-photo
