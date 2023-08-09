@@ -9,4 +9,6 @@ public interface IBlogStackUserService {
      ResponseEntity<?> updateUser(UserRequestBean userRequestBean);
      ResponseEntity<?> deleteUser(String userId);
 
+     ResponseEntity<?> resetPassword(String blogStackUSerEmail, String blogStackUserPassword);
+
 }
