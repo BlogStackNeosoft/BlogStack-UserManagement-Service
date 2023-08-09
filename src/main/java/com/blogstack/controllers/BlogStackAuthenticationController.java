@@ -4,6 +4,7 @@ import com.blogstack.beans.request.SignInRequestBean;
 import com.blogstack.beans.request.SignUpRequestBean;
 import com.blogstack.service.IBlogStackAuthenticationService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping(path = "${iam-service-version}/authentication")
 @CrossOrigin("*")
+@Slf4j
     public class BlogStackAuthenticationController {
 
         @Autowired
@@ -32,8 +34,9 @@ import java.io.IOException;
     public ResponseEntity<?> refreshToken(@RequestParam("token") String token){
         return this.blogStackAuthenticationService.refreshTokens(token);
     }
-    @PostMapping(value = "/forgot-password")
+    @PostMapping(value = "/forgot-password/")
     public ResponseEntity<?> forgotPassword(@RequestParam("email") String blogStackUserEmail) {
+        log.info("Hit on forgot password");
         return this.blogStackAuthenticationService.forgotPasswordEmailGeneration(blogStackUserEmail);
     }
 
