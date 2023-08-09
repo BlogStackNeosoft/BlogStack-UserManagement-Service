@@ -13,7 +13,6 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping(path = "${iam-service-version}/authentication")
-@CrossOrigin("*")
 @Slf4j
     public class BlogStackAuthenticationController {
 
@@ -34,10 +33,6 @@ import java.io.IOException;
     public ResponseEntity<?> refreshToken(@RequestParam("token") String token){
         return this.blogStackAuthenticationService.refreshTokens(token);
     }
-    @PostMapping(value = "/forgot-password/")
-    public ResponseEntity<?> forgotPassword(@RequestParam("email") String blogStackUserEmail) {
-        log.info("Hit on forgot password");
-        return this.blogStackAuthenticationService.forgotPasswordEmailGeneration(blogStackUserEmail);
-    }
+
 
 }
