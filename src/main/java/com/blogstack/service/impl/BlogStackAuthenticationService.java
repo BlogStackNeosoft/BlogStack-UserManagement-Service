@@ -157,14 +157,12 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
     }
 
     @Override
-    public ResponseEntity<?> forgotPasswordEmailGeneration(String blogStackUserEmail, String blogStackUserId) {
-
-        // firstCheckUserExistWith given email and id
-        Optional<BlogStackUser> foundBlogStackUser = this.blogStackUserRepository.findByBsuUserIdAndBsuEmailId(blogStackUserId, blogStackUserEmail);
+    public ResponseEntity<?> forgotPasswordEmailGeneration(String blogStackUserEmail) {
+        // firstCheckUserExistWith given email
+        Optional<BlogStackUser> foundBlogStackUser = this.blogStackUserRepository.findByBsuEmailId(blogStackUserEmail);
         if (foundBlogStackUser.isEmpty())
             throw new BlogStackDataNotFoundException("The user does not exist in database");
         else {
-
             log.info("Before Sending data to redis");
             BlogStackForgotPasswordBean blogStackFogotPasswordBean = BlogStackForgotPasswordBean.builder()
                     .email(foundBlogStackUser.get().getBsuEmailId())
@@ -173,7 +171,6 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
             this.redisOprationsService.saveEmailAndOtp(blogStackFogotPasswordBean);
             log.info("otp: {}", blogStackFogotPasswordBean.getOtp());
             // send a mail with the generated otp
-
             CompletableFuture<Void> asyncEmailCall = CompletableFuture.runAsync(() -> {
                 this.blogStackEmailFeignService.sendOTP(blogStackUserEmail, blogStackFogotPasswordBean.getOtp());
             }, this.threadPoolTaskExecutor);

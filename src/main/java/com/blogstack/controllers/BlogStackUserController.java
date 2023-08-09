@@ -17,7 +17,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping(path = "${iam-service-version}/user")
-// @CrossOrigin("*")
+ @CrossOrigin("*")
 public class BlogStackUserController {
     private IBlogStackUserService blogStackUserService;
     private IBlogStackS3BucketPhotoUploadService blogStackS3BucketProfilePhotoUploadService;
@@ -53,11 +53,6 @@ public class BlogStackUserController {
     @PutMapping(value = "/profile-photo/{email_id}")
     public ResponseEntity<?> updateProfilePhoto(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId, @RequestParam(value = "profile_pic") MultipartFile profilePic) throws IOException {
         return this.blogStackS3BucketProfilePhotoUploadService.uploadProfilePhoto(emailId, profilePic);
-    }
-
-    @PostMapping(value = "/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestParam("email") String blogStackUserEmail, @RequestParam("uid") String blogStackUserId) {
-        return this.blogStackAuthenticationService.forgotPasswordEmailGeneration(blogStackUserEmail, blogStackUserId);
     }
 
     @PostMapping(value = "/validate-otp")
