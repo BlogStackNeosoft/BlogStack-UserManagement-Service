@@ -17,7 +17,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping(path = "${iam-service-version}/user")
- @CrossOrigin("*")
+@CrossOrigin("*")
 public class BlogStackUserController {
     private IBlogStackUserService blogStackUserService;
     private IBlogStackS3BucketPhotoUploadService blogStackS3BucketProfilePhotoUploadService;

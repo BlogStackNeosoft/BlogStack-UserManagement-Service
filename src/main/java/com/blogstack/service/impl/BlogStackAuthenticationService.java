@@ -175,7 +175,10 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
                 this.blogStackEmailFeignService.sendOTP(blogStackUserEmail, blogStackFogotPasswordBean.getOtp());
             }, this.threadPoolTaskExecutor);
 
-            return new ResponseEntity<>(null, HttpStatus.OK);
+            return new ResponseEntity<>(ServiceResponseBean.builder()
+                    .status(Boolean.TRUE)
+                    .message("Email sent successfully")
+                    .build(), HttpStatus.OK);
         }
     }
 

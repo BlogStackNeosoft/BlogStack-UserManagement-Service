@@ -38,3 +38,5 @@ cloud:
 application:
   bucket:
     name: blogstack-profile-photo
+  aws:
+    hostname: ec2-3-110-224-124.ap-south-1.compute.amazonaws.com
