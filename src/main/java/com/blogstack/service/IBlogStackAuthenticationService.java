@@ -15,7 +15,7 @@ public interface IBlogStackAuthenticationService {
 
      ResponseEntity<?> refreshTokens(String refreshToken);
 
-     ResponseEntity<?> forgotPasswordEmailGeneration(String blogStackUserEmail, String blogStackUserId);
+     ResponseEntity<?> forgotPasswordEmailGeneration(String blogStackUserEmail);
 
      ResponseEntity<?> blogStackValidateOtp(BlogStackForgotPasswordBean blogStackForgotPasswordBean);
 

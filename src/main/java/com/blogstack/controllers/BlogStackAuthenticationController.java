@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
-
 @RequestMapping(path = "${iam-service-version}/authentication")
-
-// @CrossOrigin("*")
+@CrossOrigin("*")
     public class BlogStackAuthenticationController {
 
         @Autowired
@@ -33,6 +31,10 @@ import java.io.IOException;
     @PostMapping(value = "/refresh-token/")
     public ResponseEntity<?> refreshToken(@RequestParam("token") String token){
         return this.blogStackAuthenticationService.refreshTokens(token);
+    }
+    @PostMapping(value = "/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam("email") String blogStackUserEmail) {
+        return this.blogStackAuthenticationService.forgotPasswordEmailGeneration(blogStackUserEmail);
     }
 
 }
