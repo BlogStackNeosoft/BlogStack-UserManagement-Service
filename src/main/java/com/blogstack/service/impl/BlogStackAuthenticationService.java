@@ -5,6 +5,7 @@ import com.blogstack.beans.request.SignInRequestBean;
 import com.blogstack.beans.request.SignUpRequestBean;
 import com.blogstack.beans.response.JwtResponseBean;
 import com.blogstack.beans.response.ServiceResponseBean;
+import com.blogstack.beans.response.UserResponseBean;
 import com.blogstack.commons.BlogStackMessageConstants;
 import com.blogstack.entities.BlogStackRoleDetail;
 import com.blogstack.entities.BlogStackUser;
@@ -178,6 +179,8 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
             return new ResponseEntity<>(ServiceResponseBean.builder()
                     .status(Boolean.TRUE)
                     .message("Email sent successfully")
+                    .data(UserResponseBean.builder()
+                            .emailId(blogStackUserEmail).build())
                     .build(), HttpStatus.OK);
         }
     }
@@ -190,9 +193,10 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
                 return new ResponseEntity<>(ServiceResponseBean.builder()
                         .status(Boolean.TRUE)
                         .message("user validated")
-                        .build(), HttpStatus.OK);
+                        .data(UserResponseBean.builder()
+                                .emailId(blogStackForgotPasswordBean.getEmail())
+                                .build()), HttpStatus.OK);
         }
-
         throw new BlogStackDataNotFoundException("OTP of user not found");
     }
 }

@@ -55,6 +55,11 @@ public class BlogStackUserController {
         return this.blogStackS3BucketProfilePhotoUploadService.uploadProfilePhoto(emailId, profilePic);
     }
 
+    @PatchMapping(value = "/reset-password")
+    public ResponseEntity<?> sertPassword(@RequestParam("email") String blogStackUserEmail, @RequestParam("password") String blogStackUserPassword){
+        return this.blogStackUserService.resetPassword(blogStackUserEmail,blogStackUserPassword);
+    }
+
     @PostMapping(value = "/validate-otp")
     public ResponseEntity<?> validateOtp(@RequestBody BlogStackForgotPasswordBean forgotPasswordBean) {
         return this.blogStackAuthenticationService.blogStackValidateOtp(forgotPasswordBean);
