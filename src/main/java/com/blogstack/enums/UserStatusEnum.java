@@ -8,12 +8,10 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public enum UserStatusEnum {
-
     ACTIVE("ACTIVE"),
     INACTIVE("INACTIVE"),
     SUSPEND("SUSPEND"),
     DELETE("DELETED");
-
     @Getter
     private String value;
 

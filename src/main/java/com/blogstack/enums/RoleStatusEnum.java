@@ -8,14 +8,9 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public enum RoleStatusEnum {
-
     ACTIVE("ACTIVE"),
-
     INACTIVE("INACTIVE"),
-
-
     DELETED("DELETED");
-
     @Getter
     private String value;
 

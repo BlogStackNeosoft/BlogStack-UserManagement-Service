@@ -54,19 +54,4 @@ public class BlogStackUserController {
     public ResponseEntity<?> updateProfilePhoto(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId, @RequestParam(value = "profile_pic") MultipartFile profilePic) throws IOException {
         return this.blogStackS3BucketProfilePhotoUploadService.uploadProfilePhoto(emailId, profilePic);
     }
-
-    @PostMapping(value = "/forgot-password/")
-    public ResponseEntity<?> forgotPassword(@RequestParam("email") String blogStackUserEmail) {
-        return this.blogStackAuthenticationService.forgotPasswordEmailGeneration(blogStackUserEmail);
-    }
-
-    @PatchMapping(value = "/reset-password/")
-    public ResponseEntity<?> sertPassword(@RequestParam("email") String blogStackUserEmail, @RequestParam("password") String blogStackUserPassword){
-        return this.blogStackUserService.resetPassword(blogStackUserEmail,blogStackUserPassword);
-    }
-
-    @PostMapping(value = "/validate-otp/")
-    public ResponseEntity<?> validateOtp(@RequestBody BlogStackForgotPasswordBean forgotPasswordBean) {
-        return this.blogStackAuthenticationService.blogStackValidateOtp(forgotPasswordBean);
-    }
 }

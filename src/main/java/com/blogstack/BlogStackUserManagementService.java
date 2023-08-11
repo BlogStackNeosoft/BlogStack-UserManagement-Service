@@ -15,5 +15,4 @@ public class BlogStackUserManagementService {
     public static void main(String[] args) {
         SpringApplication.run(BlogStackUserManagementService.class, args);
     }
-
 }

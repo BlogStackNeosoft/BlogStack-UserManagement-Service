@@ -11,7 +11,6 @@ import java.util.Optional;
 public interface IBlogStackRoleDetailRepository extends JpaRepository<BlogStackRoleDetail, Long>{
 
     public Optional<BlogStackRoleDetail> findByBrdRoleNameIgnoreCase(String roleName);
-//    public Optional<BlogStackRoleDetail> findByBrdRoleNameIgnoreCase(String roleName);
 
     List<BlogStackRoleDetail> findBlogStackRoleDetailsByBlogStackUsersBsuUserId(String id);
 }
