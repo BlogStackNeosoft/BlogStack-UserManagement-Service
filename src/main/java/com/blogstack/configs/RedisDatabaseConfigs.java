@@ -19,7 +19,7 @@ public class RedisDatabaseConfigs {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
         jedisConnectionFactory.setPort(6379);
         jedisConnectionFactory.setHostName(this.awsSeverHostName);
-        jedisConnectionFactory.setTimeout(50000);
+        jedisConnectionFactory.setTimeout(10000 * 60 * 5);
         jedisConnectionFactory.afterPropertiesSet();
         return jedisConnectionFactory;
     }

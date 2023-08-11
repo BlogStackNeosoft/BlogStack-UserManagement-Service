@@ -188,6 +188,7 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
     @Override
     public ResponseEntity<?> blogStackValidateOtp(BlogStackForgotPasswordBean blogStackForgotPasswordBean) {
         Optional<BlogStackForgotPasswordBean> foundObjectWithOtp = this.redisOprationsService.getOtpById(blogStackForgotPasswordBean.getEmail());
+        log.info("foundObjectWithOtp: {}",foundObjectWithOtp);
         if (foundObjectWithOtp.isPresent()) {
             if (foundObjectWithOtp.get().getOtp().equals(blogStackForgotPasswordBean.getOtp()))
                 return new ResponseEntity<>(ServiceResponseBean.builder()
