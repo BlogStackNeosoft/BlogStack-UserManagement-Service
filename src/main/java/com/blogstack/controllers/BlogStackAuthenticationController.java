@@ -1,5 +1,6 @@
 package com.blogstack.controllers;
 
+import com.blogstack.beans.redis.BlogStackForgotPasswordBean;
 import com.blogstack.beans.request.SignInRequestBean;
 import com.blogstack.beans.request.SignUpRequestBean;
 import com.blogstack.service.IBlogStackAuthenticationService;
@@ -12,11 +13,13 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping(path = "${iam-service-version}/authentication")
 @Slf4j
+
     public class BlogStackAuthenticationController {
 
-        @Autowired
+    @Autowired
     private IBlogStackAuthenticationService blogStackAuthenticationService;
 
     @PostMapping("/sign-up/")
@@ -34,5 +37,18 @@ import java.io.IOException;
         return this.blogStackAuthenticationService.refreshTokens(token);
     }
 
+    @PostMapping(value = "/forgot-password/")
+    public ResponseEntity<?> forgotPassword(@RequestParam("email") String blogStackUserEmail) {
+        return this.blogStackAuthenticationService.forgotPasswordEmailGeneration(blogStackUserEmail);
+    }
 
+    @PostMapping(value = "/validate-otp/")
+    public ResponseEntity<?> validateOtp(@RequestBody BlogStackForgotPasswordBean forgotPasswordBean) {
+        return this.blogStackAuthenticationService.blogStackValidateOtp(forgotPasswordBean);
+    }
+
+    @PatchMapping(value = "/reset-password/")
+    public ResponseEntity<?> sertPassword(@RequestParam("email") String blogStackUserEmail, @RequestParam("password") String blogStackUserPassword){
+        return this.blogStackAuthenticationService.resetPassword(blogStackUserEmail,blogStackUserPassword);
+    }
 }

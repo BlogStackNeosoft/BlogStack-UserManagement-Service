@@ -8,15 +8,10 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 
 public interface IBlogStackAuthenticationService {
-
      ResponseEntity<?> signUp(SignUpRequestBean signUpRequestBean) throws IOException;
-
      ResponseEntity<?> signIn(SignInRequestBean signInRequestBean);
-
      ResponseEntity<?> refreshTokens(String refreshToken);
-
      ResponseEntity<?> forgotPasswordEmailGeneration(String blogStackUserEmail);
-
      ResponseEntity<?> blogStackValidateOtp(BlogStackForgotPasswordBean blogStackForgotPasswordBean);
-
+     ResponseEntity<?> resetPassword(String blogStackUSerEmail, String blogStackUserPassword);
 }

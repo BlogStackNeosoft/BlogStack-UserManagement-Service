@@ -39,5 +39,4 @@ public class BlogStackRoleDetail {
     @Column(name = "brd_status")
     @JsonIgnore
     private String brdStatus;
-
 }
