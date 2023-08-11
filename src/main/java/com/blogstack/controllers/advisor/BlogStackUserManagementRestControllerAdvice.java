@@ -42,5 +42,4 @@ public class BlogStackUserManagementRestControllerAdvice {
                 .message(ioException.getMessage())
                 .build();
     }
-
 }

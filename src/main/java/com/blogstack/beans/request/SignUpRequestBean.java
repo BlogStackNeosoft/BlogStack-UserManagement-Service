@@ -1,5 +1,6 @@
 package com.blogstack.beans.request;
 
+import com.blogstack.commons.BlogStackMessageConstants;
 import com.blogstack.entities.BlogStackRoleDetail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -27,11 +28,10 @@ public class SignUpRequestBean {
     private String userId;
 
     @JsonProperty(value = "email_id")
-    @NotBlank(message = "Email connot be blank")
+    @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK)
     private String emailId;
 
     @JsonProperty(value = "last_name")
-    @NotBlank(message = "Email connot be blank")
     private String lastName;
 
     @JsonProperty(value = "middle_name")
@@ -47,11 +47,11 @@ public class SignUpRequestBean {
     private String phoneNumber;
 
     @JsonProperty(value = "password")
-    @NotBlank(message = "Password cannot be blank")
+    @NotBlank(message = BlogStackMessageConstants.PASSWORD_CANT_BLANK)
     private String password;
 
     @JsonProperty(value = "blogStackRoleDetails")
-    @NotNull(message = "Role can not be blank")
+    @NotNull(message = BlogStackMessageConstants.ROLE_NAME_CANT_BLANK)
     private Set<BlogStackRoleDetail> blogStackRoleDetails;
 
     @JsonIgnore
