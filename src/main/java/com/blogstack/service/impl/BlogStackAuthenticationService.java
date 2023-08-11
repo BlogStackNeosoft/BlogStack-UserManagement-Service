@@ -188,6 +188,7 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
     }
     @Override
     public ResponseEntity<?> blogStackValidateOtp(BlogStackForgotPasswordBean blogStackForgotPasswordBean) {
+
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(blogStackForgotPasswordBean.getEmail());
         log.info("BlogStackUserOptional :: {}", blogStackUserOptional);
 

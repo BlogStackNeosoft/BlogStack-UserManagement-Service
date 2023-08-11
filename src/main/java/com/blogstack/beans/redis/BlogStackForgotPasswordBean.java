@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.validation.constraints.NotBlank;
+import jdk.jfr.ContentType;
 import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
 
