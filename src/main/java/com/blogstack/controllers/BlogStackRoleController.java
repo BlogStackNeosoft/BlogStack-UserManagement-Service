@@ -41,5 +41,4 @@ public class BlogStackRoleController {
     public ResponseEntity<?> deleteRole(@PathVariable(value = "role_name") @NotBlank(message = BlogStackMessageConstants.ROLE_ID_CANT_EMPTY) String roleId) {
         return this.blogStackRoleDetailService.deleteRole(roleId);
     }
-
 }

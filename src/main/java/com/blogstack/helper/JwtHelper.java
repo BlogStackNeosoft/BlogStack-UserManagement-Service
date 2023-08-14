@@ -15,12 +15,10 @@ import java.util.stream.Collectors;
 @Component
 public class JwtHelper {
 
-    //requirement :
     public static final long JWT_TOKEN_VALIDITY =  1000 * 60 * 15;
 
     public static final long JWT_REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 24;
 
-    //    public static final long JWT_TOKEN_VALIDITY =  60;
     private final String secret = "afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf";
 
     //retrieve username from jwt token

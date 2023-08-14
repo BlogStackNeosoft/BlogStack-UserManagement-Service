@@ -5,14 +5,14 @@ spring:
       cache-names: blogstack-user-management
       key-prefix: blogstack
   redis:
-    host: ec2-3-110-224-124.ap-south-1.compute.amazonaws.com
+    host: ec2-52-91-230-105.compute-1.amazonaws.com
     port: 6379
   main:
     allow-bean-definition-overriding: true
   application:
     name: BlogStackIAMService
   datasource:
-    url: jdbc:postgresql://ec2-3-110-224-124.ap-south-1.compute.amazonaws.com:5432/blogstackusermanagement
+    url: jdbc:postgresql://ec2-52-66-208-5.ap-south-1.compute.amazonaws.com:5432/blogstackusermanagement
     username: postgres
     password: root
   jpa:
@@ -37,4 +37,6 @@ cloud:
 
 application:
   bucket:
-    name: blogstackprofilephoto
+    name: blogstack-profile-photo
+  aws:
+    hostname: ec2-52-91-230-105.compute-1.amazonaws.com

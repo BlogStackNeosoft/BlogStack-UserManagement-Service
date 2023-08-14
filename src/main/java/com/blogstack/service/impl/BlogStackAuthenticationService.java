@@ -5,33 +5,37 @@ import com.blogstack.beans.request.SignInRequestBean;
 import com.blogstack.beans.request.SignUpRequestBean;
 import com.blogstack.beans.response.JwtResponseBean;
 import com.blogstack.beans.response.ServiceResponseBean;
+import com.blogstack.beans.response.UserResponseBean;
 import com.blogstack.commons.BlogStackMessageConstants;
 import com.blogstack.entities.BlogStackRoleDetail;
 import com.blogstack.entities.BlogStackUser;
 import com.blogstack.enums.UserStatusEnum;
 import com.blogstack.enums.UuidPrefixEnum;
 import com.blogstack.exceptions.BlogStackDataNotFoundException;
-import com.blogstack.feign.client.IBlogStackEmailFeignService;
+import com.blogstack.feign.clients.IBlogStackEmailFeignService;
 import com.blogstack.helper.JwtHelper;
 import com.blogstack.mappers.entity.pojo.IBlogStackUserEntityPojoMapper;
 import com.blogstack.mappers.pojo.entity.IBlogStackUserPojoEntityMapper;
 import com.blogstack.repository.IBlogStackRoleDetailRepository;
 import com.blogstack.repository.IBlogStackUserRepository;
 import com.blogstack.service.IBlogStackAuthenticationService;
-import com.blogstack.repository.IBlogStackRedisOprationsService;
 import com.blogstack.utils.BlogStackCommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.time.Duration;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -50,20 +54,22 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
     private IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private IBlogStackRoleDetailRepository blogStackRoleDetailRepository;
-    private IBlogStackRedisOprationsService redisOprationsService;
     private IBlogStackEmailFeignService blogStackEmailFeignService;
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    private RedisTemplate redisTemplate;
+
     @Autowired
-    public BlogStackAuthenticationService(JwtHelper jwtHelper, IBlogStackUserRepository blogStackUserRepository, IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper, BCryptPasswordEncoder bCryptPasswordEncoder, IBlogStackRoleDetailRepository blogStackRoleDetailRepository, IBlogStackRedisOprationsService redisOprationsService,IBlogStackEmailFeignService blogStackEmailFeignService,ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+    public BlogStackAuthenticationService(JwtHelper jwtHelper, IBlogStackUserRepository blogStackUserRepository, IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper, BCryptPasswordEncoder bCryptPasswordEncoder, IBlogStackRoleDetailRepository blogStackRoleDetailRepository, IBlogStackEmailFeignService blogStackEmailFeignService, ThreadPoolTaskExecutor threadPoolTaskExecutor, RedisTemplate redisTemplate) {
         this.jwtHelper = jwtHelper;
         this.blogStackUserRepository = blogStackUserRepository;
         this.blogStackUserPojoEntityMapper = blogStackUserPojoEntityMapper;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.blogStackRoleDetailRepository = blogStackRoleDetailRepository;
-        this.redisOprationsService = redisOprationsService;
-        this.blogStackEmailFeignService=blogStackEmailFeignService;
-        this.threadPoolTaskExecutor=threadPoolTaskExecutor;
+        this.blogStackEmailFeignService = blogStackEmailFeignService;
+        this.threadPoolTaskExecutor = threadPoolTaskExecutor;
+        this.redisTemplate = redisTemplate;
     }
+
     @Override
     public ResponseEntity<?> signUp(SignUpRequestBean signUpRequestBean) throws IOException {
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(signUpRequestBean.getEmailId());
@@ -89,22 +95,20 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         // ANY USER WHO SIGNS UP FROM UI WILL ALWAYS BE ASSIGNED A ROLE 'USER'
 
         Optional<BlogStackRoleDetail> blogStackRoleDetailsByRoleName = this.blogStackRoleDetailRepository.findByBrdRoleNameIgnoreCase(BlogStackMessageConstants.USER_DEFAULT_ROLE);
-        log.info(String.format("Role: %s",blogStackRoleDetailsByRoleName.isPresent()));
-
-
+        log.info(String.format("Role: %s", blogStackRoleDetailsByRoleName.isPresent()));
 
         signUpRequestBean.setUserId(userId);
         signUpRequestBean.setStatus(UserStatusEnum.INACTIVE.getValue());
         signUpRequestBean.setCreatedBy(springApplicationName);
         signUpRequestBean.setPassword(this.bCryptPasswordEncoder.encode(signUpRequestBean.getPassword()));
         signUpRequestBean.setBlogStackRoleDetails(blogStackRoleDetailsByRoleName.stream()
-                                                    .collect(Collectors.toSet()));
+                .collect(Collectors.toSet()));
 
         BlogStackUser blogStackUser = this.blogStackUserRepository.saveAndFlush(this.blogStackUserPojoEntityMapper.INSTANCE.userPojoToUserEntity(signUpRequestBean));
-        CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(()->{
-            blogStackEmailFeignService.sendMessage(blogStackUser.getBsuEmailId(),blogStackUser.getBsuFirstName());
+        CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() -> {
+            blogStackEmailFeignService.sendMessage(blogStackUser.getBsuEmailId(), blogStackUser.getBsuFirstName());
             LOGGER.info(Thread.currentThread().getName());
-        },threadPoolTaskExecutor);
+        }, threadPoolTaskExecutor);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -113,7 +117,6 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
                         .data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUser))
                         .build());
     }
-
     @Override
     public ResponseEntity<?> signIn(SignInRequestBean signInRequestBean) {
         String accessToken, refreshToken;
@@ -122,7 +125,7 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_NOT_PRESENT);
         if (bCryptPasswordEncoder.matches(signInRequestBean.getPassword(), blogStackUserOptional.get().getBsuPassword())) {
             blogStackUserOptional.get().setBsuStatus(UserStatusEnum.ACTIVE.getValue());
-            accessToken = this.jwtHelper.generateToken(signInRequestBean.getEmailId(),blogStackUserOptional.get().getBlogStackRoleDetails());
+            accessToken = this.jwtHelper.generateToken(signInRequestBean.getEmailId(), blogStackUserOptional.get().getBlogStackRoleDetails());
             refreshToken = this.jwtHelper.generateRefreshToken(signInRequestBean.getEmailId());
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.INCORRECT_PASSWORD).build());
@@ -148,7 +151,7 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         if (blogStackUserOptional.isEmpty())
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_NOT_PRESENT);
         else if (blogStackUserOptional.isPresent() && jwtHelper.validateToken(token)) {
-            String accessToken = this.jwtHelper.generateToken(email,blogStackUserOptional.get().getBlogStackRoleDetails());
+            String accessToken = this.jwtHelper.generateToken(email, blogStackUserOptional.get().getBlogStackRoleDetails());
             return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).data(JwtResponseBean.builder().userId(blogStackUserOptional.get().getBsuEmailId()).jwtToken(accessToken).refreshToken(token).build()).build());
         } else
             return ResponseEntity.status(HttpStatus.OK)
@@ -156,46 +159,77 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
     }
 
     @Override
-    public ResponseEntity<?> forgotPasswordEmailGeneration(String blogStackUserEmail, String blogStackUserId) {
-
-        // firstCheckUserExistWith given email and id
-        Optional<BlogStackUser> foundBlogStackUser = this.blogStackUserRepository.findByBsuUserIdAndBsuEmailId(blogStackUserId, blogStackUserEmail);
-        if(foundBlogStackUser.isEmpty())
-            throw new BlogStackDataNotFoundException("The user does not exist in database");
+    public ResponseEntity<?> forgotPasswordEmailGeneration(String blogStackUserEmail) {
+        Optional<BlogStackUser> foundBlogStackUser = this.blogStackUserRepository.findByBsuEmailId(blogStackUserEmail);
+        if (foundBlogStackUser.isEmpty())
+            throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_DOES_NOT_EXIST);
         else {
-
-            log.info("Before Sending data to redis");
-            BlogStackForgotPasswordBean blogStackFogotPasswordBean = BlogStackForgotPasswordBean.builder()
+            BlogStackForgotPasswordBean blogStackForgotPasswordBean = BlogStackForgotPasswordBean.builder()
                     .email(foundBlogStackUser.get().getBsuEmailId())
-                    .otp(String.valueOf(new Random().nextInt(99999)))
+                    .otp(String.valueOf(100000 + new Random().nextInt(900000)))
                     .build();
-            this.redisOprationsService.saveEmailAndOtp(blogStackFogotPasswordBean);
-            log.info("otp: {}",blogStackFogotPasswordBean.getOtp());
-            // send a mail with the generated otp
 
-            CompletableFuture<Void> asyncEmailCall = CompletableFuture.runAsync(()->{
-                this.blogStackEmailFeignService.sendOTP(blogStackUserEmail,blogStackFogotPasswordBean.getOtp());
-            },this.threadPoolTaskExecutor);
+            String cacheKey = foundBlogStackUser.get().getBsuUserId();
+            log.info("otp: {}", blogStackForgotPasswordBean.getOtp());
+            this.redisTemplate.opsForValue().set(foundBlogStackUser.get().getBsuUserId(), blogStackForgotPasswordBean.getOtp());
+            this.redisTemplate.expire(cacheKey, Duration.ofSeconds(300));
 
-            return new ResponseEntity<>(null, HttpStatus.OK);
+            CompletableFuture<Void> asyncEmailCall = CompletableFuture.runAsync(() -> {
+                this.blogStackEmailFeignService.sendOTP(blogStackUserEmail, blogStackForgotPasswordBean.getOtp());
+            }, this.threadPoolTaskExecutor);
+
+            return new ResponseEntity<>(ServiceResponseBean.builder()
+                    .status(Boolean.TRUE)
+                    .message(BlogStackMessageConstants.OTP_SENT_SUCCESSFULLY)
+                    .data(UserResponseBean.builder()
+                            .emailId(blogStackUserEmail).build())
+                    .build(), HttpStatus.OK);
         }
     }
-
     @Override
     public ResponseEntity<?> blogStackValidateOtp(BlogStackForgotPasswordBean blogStackForgotPasswordBean) {
-        Optional<BlogStackForgotPasswordBean> foundObjectWithOtp = this.redisOprationsService.getOtpById(blogStackForgotPasswordBean.getEmail());
-        if(foundObjectWithOtp.isPresent())
-        {
-            if(foundObjectWithOtp.get().getOtp().equals(blogStackForgotPasswordBean.getOtp()))
+
+        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(blogStackForgotPasswordBean.getEmail());
+        log.info("BlogStackUserOptional :: {}", blogStackUserOptional);
+
+        if(blogStackUserOptional.isEmpty())
+            throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_NOT_PRESENT);
+
+        String cacheKey = blogStackUserOptional.get().getBsuUserId();
+        Object otp = this.redisTemplate.opsForValue().get(cacheKey);
+        log.info("OTP :: {}", otp);
+
+        if (Objects.nonNull(otp)) {
+            if (blogStackForgotPasswordBean.getOtp().equals(otp)) {
+                this.redisTemplate.delete(cacheKey);
                 return new ResponseEntity<>(ServiceResponseBean.builder()
                         .status(Boolean.TRUE)
-                        .message("user validated")
-                        .build(),HttpStatus.OK);
+                        .message(BlogStackMessageConstants.OTP_VERIFY_SUCCESS)
+                        .build(), HttpStatus.OK);
+            }
         }
-
-        throw new BlogStackDataNotFoundException("OTP of user not found");
+        return new ResponseEntity<>(ServiceResponseBean.builder()
+                .status(Boolean.TRUE)
+                .message(BlogStackMessageConstants.OTP_VERIFICATION_FAILURE)
+                .build(), HttpStatus.OK);
     }
+    @Override
+    public ResponseEntity<?> resetPassword(String blogStackUSerEmail, String blogStackUserPassword) {
 
+        Optional<BlogStackUser> blogStackFoundUser = this.blogStackUserRepository.findByBsuEmailId(blogStackUSerEmail);
+        if(blogStackFoundUser.isEmpty())
+            throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_DOES_NOT_EXIST);
+
+        blogStackFoundUser.get().setBsuPassword(this.bCryptPasswordEncoder.encode(blogStackUserPassword));
+        BlogStackUser blogStackUserWithPasswordChange = this.blogStackUserRepository.saveAndFlush(blogStackFoundUser.get());
+
+        return new ResponseEntity<>(
+                ServiceResponseBean.builder()
+                        .status(Boolean.TRUE)
+                        .message(BlogStackMessageConstants.PASSWORD_CHANGED_SUCCESSFULLY)
+                        .data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserWithPasswordChange))
+                        .build(),
+                HttpStatus.OK
+        );
+    }
 }
-
-

@@ -44,10 +44,8 @@ public class UserRequestBean {
     @JsonProperty(value = "gender")
     private String gender;
 
-
     @JsonProperty(value = "profile_photo")
     private String profilePhoto;
-
 
     @JsonProperty(value = "date_of_birth")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = BlogStackCommonConstants.DOB_DATE_FORMAT)
@@ -59,4 +57,3 @@ public class UserRequestBean {
     @JsonIgnore
     private String modifiedBy;
 }
-

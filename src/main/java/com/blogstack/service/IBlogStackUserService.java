@@ -8,5 +8,4 @@ public interface IBlogStackUserService {
      ResponseEntity<?> fetchAll(Integer page, Integer size);
      ResponseEntity<?> updateUser(UserRequestBean userRequestBean);
      ResponseEntity<?> deleteUser(String userId);
-
 }

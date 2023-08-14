@@ -109,19 +109,19 @@
             <version>0.26.0-beta</version>
         </dependency>
 
+
+
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
             <version>1.11.133</version>
         </dependency>
 
-
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>4.4.3</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

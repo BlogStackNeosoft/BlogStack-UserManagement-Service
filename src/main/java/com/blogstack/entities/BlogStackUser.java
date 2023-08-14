@@ -20,7 +20,6 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = "blogStackRoleDetails")
 @Table(name = "blogstack_user", schema = "user_management")
 public class BlogStackUser {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bsu_seq_id")
@@ -49,7 +48,6 @@ public class BlogStackUser {
 
     @Column(name = "bsu_phone_number")
     private String bsuPhoneNumber;
-
 
     @Column(name = "bsu_status")
     private String bsuStatus;

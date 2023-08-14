@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -41,15 +42,17 @@ public class BlogStackUserService implements IBlogStackUserService {
 
     @Value("#{'${spring.application.name}'.toUpperCase()}")
     private String springApplicationName;
-
-    @Autowired
     private IBlogStackUserRepository blogStackUserRepository;
-
-    @Autowired
     private IBlogStackRoleDetailRepository blogStackRoleDetailRepository;
-
-    @Autowired
     private IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    public BlogStackUserService(IBlogStackUserRepository blogStackUserRepository, IBlogStackRoleDetailRepository blogStackRoleDetailRepository, IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.blogStackUserRepository = blogStackUserRepository;
+        this.blogStackRoleDetailRepository = blogStackRoleDetailRepository;
+        this.blogStackUserPojoEntityMapper = blogStackUserPojoEntityMapper;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     @Override
     public ResponseEntity<?> fetchAll(Integer page, Integer size) {
