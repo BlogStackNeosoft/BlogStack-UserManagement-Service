@@ -3,11 +3,13 @@ package com.blogstack.service.impl;
 import com.blogstack.beans.request.UserRequestBean;
 import com.blogstack.beans.response.PageResponseBean;
 import com.blogstack.beans.response.ServiceResponseBean;
+import com.blogstack.beans.response.UserResponseBean;
 import com.blogstack.commons.BlogStackMessageConstants;
 import com.blogstack.entities.BlogStackRoleDetail;
 import com.blogstack.entities.BlogStackUser;
 import com.blogstack.enums.UserStatusEnum;
 import com.blogstack.exceptions.BlogStackDataNotFoundException;
+import com.blogstack.feign.clients.IBlogStackQuestionFeignService;
 import com.blogstack.mappers.entity.pojo.IBlogStackUserEntityPojoMapper;
 import com.blogstack.mappers.pojo.entity.IBlogStackUserPojoEntityMapper;
 import com.blogstack.repository.IBlogStackRoleDetailRepository;
@@ -46,12 +48,15 @@ public class BlogStackUserService implements IBlogStackUserService {
     private IBlogStackRoleDetailRepository blogStackRoleDetailRepository;
     private IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private IBlogStackQuestionFeignService blogStackQuestionFeignService;
+
     @Autowired
-    public BlogStackUserService(IBlogStackUserRepository blogStackUserRepository, IBlogStackRoleDetailRepository blogStackRoleDetailRepository, IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public BlogStackUserService(IBlogStackUserRepository blogStackUserRepository, IBlogStackRoleDetailRepository blogStackRoleDetailRepository, IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper, BCryptPasswordEncoder bCryptPasswordEncoder, IBlogStackQuestionFeignService blogStackQuestionFeignService) {
         this.blogStackUserRepository = blogStackUserRepository;
         this.blogStackRoleDetailRepository = blogStackRoleDetailRepository;
         this.blogStackUserPojoEntityMapper = blogStackUserPojoEntityMapper;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.blogStackQuestionFeignService = blogStackQuestionFeignService;
     }
 
     @Override
@@ -133,4 +138,41 @@ public class BlogStackUserService implements IBlogStackUserService {
                     .build()
                     ,HttpStatus.OK);
     }
+
+    public ResponseEntity<?> resetPassword(String blogStackUSerEmail, String blogStackUserPassword) {
+
+        // find the user if exists
+        Optional<BlogStackUser> blogStackFoundUser = this.blogStackUserRepository.findByBsuEmailId(blogStackUSerEmail);
+        if(blogStackFoundUser.isEmpty())
+            throw new BlogStackDataNotFoundException("The user with given email does not exists");
+
+        blogStackFoundUser.get().setBsuPassword(this.bCryptPasswordEncoder.encode(blogStackUserPassword));
+        BlogStackUser blogStackUserWithPasswordChange = this.blogStackUserRepository.saveAndFlush(blogStackFoundUser.get());
+
+        return new ResponseEntity<>(
+                ServiceResponseBean.builder()
+                        .status(Boolean.TRUE)
+                        .message("Password Changed Successfully")
+                        .data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserWithPasswordChange))
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
+    @Override
+    public ResponseEntity<?> fetchAllQuestionByUserId(String emailId) {
+        ResponseEntity<?> blogStackQuestionList = this.blogStackQuestionFeignService.fetchAllQuestionsByUserId(emailId);
+        LOGGER.info("BlogStackQuestionList :: {}", blogStackQuestionList);
+
+        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(emailId);
+        LOGGER.info("BlogStackUser :: {}", blogStackUserOptional);
+
+        if(blogStackUserOptional.isEmpty())
+            throw new BlogStackDataNotFoundException("The user with given email does not exists");
+
+        UserResponseBean userResponseBean = IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get());
+        userResponseBean.setQuestions(blogStackQuestionList.getBody());
+        return ResponseEntity.ok(ServiceResponseBean.builder().status(Boolean.TRUE).data(userResponseBean).build());
+    }
+
 }
