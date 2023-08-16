@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 public interface IBlogStackUserService {
      ResponseEntity<?> fetchUserById(String userId);
      ResponseEntity<?> fetchAll(Integer page, Integer size);
+     ResponseEntity<?> fetchUserByUserId(String userId);
      ResponseEntity<?> updateUser(UserRequestBean userRequestBean);
      ResponseEntity<?> deleteUser(String userId);
 }

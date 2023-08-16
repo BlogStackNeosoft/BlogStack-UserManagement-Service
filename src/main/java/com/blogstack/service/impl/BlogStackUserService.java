@@ -73,6 +73,17 @@ public class BlogStackUserService implements IBlogStackUserService {
     }
 
     @Override
+    public ResponseEntity<?> fetchUserByUserId(String userId) {
+        Optional<BlogStackUser> blogStackUserOptional=this.blogStackUserRepository.findByBsuUserId(userId);
+        if(blogStackUserOptional.isEmpty())
+            throw new BlogStackDataNotFoundException(BlogStackMessageConstants.DATA_NOT_FOUND);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder()
+                .status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get())).build());
+
+    }
+
+    @Override
     @Cacheable(key = "#emailId")
     public ResponseEntity<?> fetchUserById(String emailId) {
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(emailId);

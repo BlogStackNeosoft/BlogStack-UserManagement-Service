@@ -34,7 +34,10 @@ public class BlogStackUserController {
     public ResponseEntity<?> fetchUserById(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId) {
         return this.blogStackUserService.fetchUserById(emailId);
     }
-
+    @GetMapping(value = "/user/{user_Id}")
+    public ResponseEntity<?> fetchUserByUserId(@PathVariable(value = "user_Id") @NotBlank(message = BlogStackMessageConstants.USER_ID_CANT_BLANK) String userId){
+        return this.blogStackUserService.fetchUserByUserId(userId);
+    }
     @GetMapping(value = "/")
     public ResponseEntity<?> fetchAllUser(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "2147483647") Integer size) {
         return this.blogStackUserService.fetchAll(page, size);
