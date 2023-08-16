@@ -55,6 +55,9 @@ public class BlogStackUser {
     @Column(name = "bsu_date_of_birth")
     private LocalDate bsuDateOfBirth;
 
+    @Column(name = "bsu_jwt_secret")
+    private String bsuJwtSecret;
+
     @Column(name = "bsu_address")
     private String bsuAddress;
 

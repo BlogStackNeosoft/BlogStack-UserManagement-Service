@@ -21,4 +21,6 @@ public interface IBlogStackUserRepository extends JpaRepository<BlogStackUser, L
 
     Optional<BlogStackUser> findByBsuUserIdAndBsuEmailId(String blogStackUserId,String blogStackUserEmail);
 
+    Optional<BlogStackUser> findByBsuUserIdIgnoreCase(String bsuUserId);
+
 }

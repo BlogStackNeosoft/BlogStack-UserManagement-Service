@@ -54,4 +54,9 @@ public class BlogStackUserController {
     public ResponseEntity<?> updateProfilePhoto(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId, @RequestParam(value = "profile_pic") MultipartFile profilePic) throws IOException {
         return this.blogStackS3BucketProfilePhotoUploadService.uploadProfilePhoto(emailId, profilePic);
     }
+
+    @GetMapping(value = "/user-id/{user_id}")
+    public ResponseEntity<?> getUserById(@PathVariable("user_id") String userId){
+        return this.blogStackUserService.fetchUserByUserId(userId);
+    }
 }

@@ -20,6 +20,7 @@ import com.blogstack.repository.IBlogStackRoleDetailRepository;
 import com.blogstack.repository.IBlogStackUserRepository;
 import com.blogstack.service.IBlogStackAuthenticationService;
 import com.blogstack.utils.BlogStackCommonUtils;
+import com.blogstack.utils.BlogStackSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,9 +58,18 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
     private IBlogStackEmailFeignService blogStackEmailFeignService;
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
     private RedisTemplate redisTemplate;
+    private BlogStackSecurityUtils blogStackSecurityUtils;
 
     @Autowired
-    public BlogStackAuthenticationService(JwtHelper jwtHelper, IBlogStackUserRepository blogStackUserRepository, IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper, BCryptPasswordEncoder bCryptPasswordEncoder, IBlogStackRoleDetailRepository blogStackRoleDetailRepository, IBlogStackEmailFeignService blogStackEmailFeignService, ThreadPoolTaskExecutor threadPoolTaskExecutor, RedisTemplate redisTemplate) {
+    public BlogStackAuthenticationService(JwtHelper jwtHelper,
+                                          IBlogStackUserRepository blogStackUserRepository,
+                                          IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper,
+                                          BCryptPasswordEncoder bCryptPasswordEncoder,
+                                          IBlogStackRoleDetailRepository blogStackRoleDetailRepository,
+                                          IBlogStackEmailFeignService blogStackEmailFeignService,
+                                          ThreadPoolTaskExecutor threadPoolTaskExecutor,
+                                          RedisTemplate redisTemplate,
+                                          BlogStackSecurityUtils blogStackSecurityUtils) {
         this.jwtHelper = jwtHelper;
         this.blogStackUserRepository = blogStackUserRepository;
         this.blogStackUserPojoEntityMapper = blogStackUserPojoEntityMapper;
@@ -68,6 +78,7 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         this.blogStackEmailFeignService = blogStackEmailFeignService;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.redisTemplate = redisTemplate;
+        this.blogStackSecurityUtils = blogStackSecurityUtils;
     }
 
     @Override
@@ -82,18 +93,6 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         String userId = BlogStackCommonUtils.INSTANCE.uniqueIdentifier(UuidPrefixEnum.USER_ID.getValue());
         LOGGER.info("UserId :: {}", userId);
 
-        /*Set<BlogStackRoleDetail> blogStackRoleDetails = signUpRequestBean.getBlogStackRoleDetails().stream().map(blogStackRoleDetail -> {
-            Optional<BlogStackRoleDetail> blogStackRoleDetailOptional = this.blogStackRoleDetailRepository.findByBrdRoleNameIgnoreCase(blogStackRoleDetail.getBrdRoleName());
-            return blogStackRoleDetailOptional
-                    .orElseGet(() -> BlogStackRoleDetail.builder()
-                            .brdRoleId(BlogStackCommonUtils.INSTANCE.uniqueIdentifier(UuidPrefixEnum.ROLE_ID.getValue()))
-                            .brdRoleName(blogStackRoleDetail.getBrdRoleName())
-                            .brdStatus(RoleStatusEnum.ACTIVE.getValue())
-                            .build());
-        }).collect(Collectors.toSet());*/
-
-        // ANY USER WHO SIGNS UP FROM UI WILL ALWAYS BE ASSIGNED A ROLE 'USER'
-
         Optional<BlogStackRoleDetail> blogStackRoleDetailsByRoleName = this.blogStackRoleDetailRepository.findByBrdRoleNameIgnoreCase(BlogStackMessageConstants.USER_DEFAULT_ROLE);
         log.info(String.format("Role: %s", blogStackRoleDetailsByRoleName.isPresent()));
 
@@ -103,6 +102,8 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         signUpRequestBean.setPassword(this.bCryptPasswordEncoder.encode(signUpRequestBean.getPassword()));
         signUpRequestBean.setBlogStackRoleDetails(blogStackRoleDetailsByRoleName.stream()
                 .collect(Collectors.toSet()));
+        signUpRequestBean.setBsuJwtSecret(this.bCryptPasswordEncoder.encode(this.blogStackSecurityUtils.randomStringGenerator()));
+
 
         BlogStackUser blogStackUser = this.blogStackUserRepository.saveAndFlush(this.blogStackUserPojoEntityMapper.INSTANCE.userPojoToUserEntity(signUpRequestBean));
         CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() -> {
@@ -125,9 +126,15 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_NOT_PRESENT);
         if (bCryptPasswordEncoder.matches(signInRequestBean.getPassword(), blogStackUserOptional.get().getBsuPassword())) {
             blogStackUserOptional.get().setBsuStatus(UserStatusEnum.ACTIVE.getValue());
-            accessToken = this.jwtHelper.generateToken(signInRequestBean.getEmailId(), blogStackUserOptional.get().getBlogStackRoleDetails());
-            refreshToken = this.jwtHelper.generateRefreshToken(signInRequestBean.getEmailId());
-        } else {
+
+            accessToken = this.jwtHelper.generateToken(signInRequestBean.getEmailId(),
+                                                        blogStackUserOptional.get().getBlogStackRoleDetails(),
+                                                        blogStackUserOptional.get().getBsuJwtSecret());
+
+            refreshToken = this.jwtHelper.generateRefreshToken(signInRequestBean.getEmailId(),
+                                                               blogStackUserOptional.get().getBsuJwtSecret());
+        }
+        else {
             return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.FALSE).message(BlogStackMessageConstants.INCORRECT_PASSWORD).build());
         }
         this.blogStackUserRepository.saveAndFlush(blogStackUserOptional.get());
@@ -151,7 +158,10 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         if (blogStackUserOptional.isEmpty())
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.USER_NOT_PRESENT);
         else if (blogStackUserOptional.isPresent() && jwtHelper.validateToken(token)) {
-            String accessToken = this.jwtHelper.generateToken(email, blogStackUserOptional.get().getBlogStackRoleDetails());
+            String accessToken = this.jwtHelper.generateToken(email,
+                                                            blogStackUserOptional.get().getBlogStackRoleDetails(),
+                                                            blogStackUserOptional.get().getBsuJwtSecret());
+
             return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).data(JwtResponseBean.builder().userId(blogStackUserOptional.get().getBsuEmailId()).jwtToken(accessToken).refreshToken(token).build()).build());
         } else
             return ResponseEntity.status(HttpStatus.OK)
@@ -233,3 +243,16 @@ public class BlogStackAuthenticationService implements IBlogStackAuthenticationS
         );
     }
 }
+
+
+        /*Set<BlogStackRoleDetail> blogStackRoleDetails = signUpRequestBean.getBlogStackRoleDetails().stream().map(blogStackRoleDetail -> {
+            Optional<BlogStackRoleDetail> blogStackRoleDetailOptional = this.blogStackRoleDetailRepository.findByBrdRoleNameIgnoreCase(blogStackRoleDetail.getBrdRoleName());
+            return blogStackRoleDetailOptional
+                    .orElseGet(() -> BlogStackRoleDetail.builder()
+                            .brdRoleId(BlogStackCommonUtils.INSTANCE.uniqueIdentifier(UuidPrefixEnum.ROLE_ID.getValue()))
+                            .brdRoleName(blogStackRoleDetail.getBrdRoleName())
+                            .brdStatus(RoleStatusEnum.ACTIVE.getValue())
+                            .build());
+        }).collect(Collectors.toSet());*/
+
+// ANY USER WHO SIGNS UP FROM UI WILL ALWAYS BE ASSIGNED A ROLE 'USER'

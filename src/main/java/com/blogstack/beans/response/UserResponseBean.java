@@ -39,6 +39,9 @@ public class UserResponseBean {
     @JsonProperty(value = "gender")
     private String gender;
 
+    @JsonProperty(value = "bsuJwtSecret")
+    private String bsuJwtSecret;
+
     @JsonProperty(value = "phone_number")
     private String phoneNumber;
 

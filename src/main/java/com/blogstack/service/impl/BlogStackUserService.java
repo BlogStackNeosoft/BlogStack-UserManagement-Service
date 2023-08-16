@@ -118,4 +118,19 @@ public class BlogStackUserService implements IBlogStackUserService {
         this.blogStackUserRepository.saveAndFlush(blogStackUserOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).message(BlogStackMessageConstants.DATA_DELETED).build());
     }
+
+    @Override
+    public ResponseEntity<?> fetchUserByUserId(String userId) {
+
+        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuUserIdIgnoreCase(userId);
+        if (blogStackUserOptional.isEmpty())
+            throw new BlogStackDataNotFoundException(BlogStackMessageConstants.DATA_NOT_FOUND);
+
+        else
+            return new ResponseEntity<>(ServiceResponseBean.builder()
+                    .status(Boolean.TRUE)
+                    .data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get()))
+                    .build()
+                    ,HttpStatus.OK);
+    }
 }

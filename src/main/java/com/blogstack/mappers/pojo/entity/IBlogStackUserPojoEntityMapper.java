@@ -29,6 +29,7 @@ public interface IBlogStackUserPojoEntityMapper {
             @Mapping(target = "blogStackRoleDetails", source = "signUpRequestBean.blogStackRoleDetails"),
             @Mapping(target = "bsuStatus", source = "signUpRequestBean.status"),
             @Mapping(target = "bsuCreatedBy", source = "signUpRequestBean.createdBy"),
+            @Mapping(target = "bsuJwtSecret", source = "signUpRequestBean.bsuJwtSecret"),
             @Mapping(target = "bsuCreatedDate", expression = "java(LocalDateTime.now())")
     })
     public BlogStackUser userPojoToUserEntity(SignUpRequestBean signUpRequestBean);
