@@ -19,8 +19,8 @@ public class BlogStackSuperAdminController {
         return this.blogStackSuperAdminService.addAdmin(adminSignUpRequestBean);
     }
 
-    @GetMapping("/roles")
-    public ResponseEntity<?> getAllRoles(){
+    @GetMapping("/admins")
+    public ResponseEntity<?> getAllAdmins(){
         return this.blogStackSuperAdminService.getAllAdmins();
     }
 }

@@ -28,11 +28,8 @@ public class RedisDatabaseConfigs {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
         jedisConnectionFactory.setPort(6379);
         jedisConnectionFactory.setHostName(this.awsSeverHostName);
-<<<<<<< HEAD
-        jedisConnectionFactory.setTimeout(10000 * 60 * 5);
-=======
+
         jedisConnectionFactory.setTimeout(500000);
->>>>>>> 032279508dcbff5bd971dfdc3fd57a96729b76ff
         jedisConnectionFactory.afterPropertiesSet();
         return jedisConnectionFactory;
     }
