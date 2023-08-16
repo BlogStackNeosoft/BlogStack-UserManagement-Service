@@ -45,10 +45,14 @@ public class UserResponseBean {
     @JsonProperty(value = "user_roles")
     private Set<BlogStackRoleDetail> blogStackRoleDetails;
 
+    @JsonProperty(value = "questions")
+    private Object questions;
+
     @JsonProperty(value = "status")
     private String status;
 
     @JsonProperty(value = "date_of_birth")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = BlogStackCommonConstants.DATE_FORMAT)
     private LocalDate dateOfBirth;
 
     @JsonProperty(value = "address")
@@ -65,5 +69,4 @@ public class UserResponseBean {
     @JsonProperty(value = "modified_on")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = BlogStackCommonConstants.DATE_FORMAT)
     private LocalDateTime modifiedOn;
-
 }
