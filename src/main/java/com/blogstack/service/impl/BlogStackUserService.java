@@ -125,6 +125,20 @@ public class BlogStackUserService implements IBlogStackUserService {
     }
 
     @Override
+    public ResponseEntity<?> fetchUserByUserId(String userId) {
+
+        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuUserIdIgnoreCase(userId);
+        if (blogStackUserOptional.isEmpty())
+            throw new BlogStackDataNotFoundException(BlogStackMessageConstants.DATA_NOT_FOUND);
+
+        else
+            return new ResponseEntity<>(ServiceResponseBean.builder()
+                    .status(Boolean.TRUE)
+                    .data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get()))
+                    .build()
+                    ,HttpStatus.OK);
+    }
+
     public ResponseEntity<?> resetPassword(String blogStackUSerEmail, String blogStackUserPassword) {
 
         // find the user if exists

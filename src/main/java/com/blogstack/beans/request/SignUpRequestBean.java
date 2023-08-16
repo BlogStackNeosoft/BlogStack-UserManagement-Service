@@ -57,6 +57,9 @@ public class SignUpRequestBean {
     @JsonIgnore
     private String status;
 
+    @JsonIgnore
+    private String bsuJwtSecret;
+
     @JsonProperty(value = "date_of_birth")
     private LocalDate dateOfBirth;
 

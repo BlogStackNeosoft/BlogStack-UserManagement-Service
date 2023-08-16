@@ -55,6 +55,11 @@ public class BlogStackUserController {
         return this.blogStackS3BucketProfilePhotoUploadService.uploadProfilePhoto(emailId, profilePic);
     }
 
+    @GetMapping(value = "/user-id/{user_id}")
+    public ResponseEntity<?> getUserById(@PathVariable("user_id") String userId) {
+        return this.blogStackUserService.fetchUserByUserId(userId);
+
+    }
     @GetMapping(value = "/all-questions/{email_id}")
     public ResponseEntity<?> fetchAllQuestionByUserId(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId){
         return this.blogStackUserService.fetchAllQuestionByUserId(emailId);

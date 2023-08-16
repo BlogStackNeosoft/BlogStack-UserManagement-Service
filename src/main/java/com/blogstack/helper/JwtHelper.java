@@ -19,7 +19,7 @@ public class JwtHelper {
 
     public static final long JWT_REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 24;
 
-    private final String secret = "afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf";
+    private String secret;
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -48,14 +48,15 @@ public class JwtHelper {
     }
 
     //generate token for user
-    public String generateToken(String emailId, Set<BlogStackRoleDetail> blogStackRoleDetails) {
+    public String generateToken(String emailId, Set<BlogStackRoleDetail> blogStackRoleDetails,String jwtSecret) {
+        this.secret = jwtSecret;
         Map<String, Object> claims = new HashMap<>();
         List<String> blogStackUserRoles = blogStackRoleDetails.stream()
                                          .map(roleDetails -> roleDetails.getBrdRoleName())
                                          .collect(Collectors.toList());
 
         claims.put(BlogStackCommonConstants.ROLE_CONSTANT,blogStackUserRoles);
-        return doGenerateToken(claims, emailId);
+        return doGenerateToken(claims, emailId,jwtSecret);
     }
 
     //while creating the token -
@@ -63,23 +64,23 @@ public class JwtHelper {
     //2. Sign the JWT using the HS512 algorithm and secret key.
     //3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
     //   compaction of the JWT to a URL-safe string
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
+    private String doGenerateToken(Map<String, Object> claims, String subject,String secret) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
-    public String generateRefreshToken(String emailId){
+    public String generateRefreshToken(String emailId, String secret){
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateRefreshToken(claims, emailId);
+        return doGenerateRefreshToken(claims, emailId, secret);
     }
 
-    private String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
+    private String doGenerateRefreshToken(Map<String, Object> claims, String subject, String jwtSecret) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_REFRESH_TOKEN_VALIDITY ))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
+                .signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
     }
 
     public String getSubject(String token)
