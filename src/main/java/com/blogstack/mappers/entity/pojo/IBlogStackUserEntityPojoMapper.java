@@ -25,15 +25,15 @@ public interface IBlogStackUserEntityPojoMapper {
             @Mapping(target = "address", source = "blogStackUser.bsuAddress"),
             @Mapping(target = "gender", source = "blogStackUser.bsuGender"),
             @Mapping(target = "phoneNumber", source = "blogStackUser.bsuPhoneNumber"),
-            @Mapping(target = "dateOfBirth", source = "blogStackUser.bsuDateOfBirth"),
+            // @Mapping(target = "dateOfBirth", source = "blogStackUser.bsuDateOfBirth"),
             @Mapping(target = "blogStackRoleDetails", source = "blogStackUser.blogStackRoleDetails"),
             @Mapping(target = "profilePhoto", source = "blogStackUser.bsuProfilePhoto"),
             @Mapping(target = "status", source = "blogStackUser.bsuStatus"),
             @Mapping(target = "bsuJwtSecret", source = "blogStackUser.bsuJwtSecret")
     })
-    public UserResponseBean mapUserMasterEntityPojoMapping(BlogStackUser blogStackUser);
+    UserResponseBean mapUserMasterEntityPojoMapping(BlogStackUser blogStackUser);
 
-    public static Function<List<BlogStackUser>, List<UserResponseBean>> mapUserMasterEntityListToPojoListMapping = blogStackUserList -> blogStackUserList.stream()
+    Function<List<BlogStackUser>, List<UserResponseBean>> mapUserMasterEntityListToPojoListMapping = blogStackUserList -> blogStackUserList.stream()
             .map(blogStackUser -> {
                 UserResponseBean.UserResponseBeanBuilder userResponseBeanBuilder = UserResponseBean.builder();
                 userResponseBeanBuilder.userId(blogStackUser.getBsuUserId())
