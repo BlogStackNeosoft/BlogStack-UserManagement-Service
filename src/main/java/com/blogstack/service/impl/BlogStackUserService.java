@@ -78,7 +78,7 @@ public class BlogStackUserService implements IBlogStackUserService {
     }
 
     @Override
-    public ResponseEntity<?> fetchUserByUserId(String userId) {
+    public ResponseEntity<ServiceResponseBean> fetchUserByUserId(String userId) {
         Optional<BlogStackUser> blogStackUserOptional=this.blogStackUserRepository.findByBsuUserId(userId);
         if(blogStackUserOptional.isEmpty())
             throw new BlogStackDataNotFoundException(BlogStackMessageConstants.DATA_NOT_FOUND);
@@ -101,7 +101,9 @@ public class BlogStackUserService implements IBlogStackUserService {
         roleDetails.addAll(this.blogStackRoleDetailRepository.findBlogStackRoleDetailsByBlogStackUsersBsuUserId(blogStackUserOptional.get().getBsuUserId()));
         blogStackUserOptional.get().setBlogStackRoleDetails(roleDetails);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get())).build());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ServiceResponseBean.builder()
+                        .status(Boolean.TRUE).data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get())).build());
     }
 
     @Override
@@ -135,7 +137,7 @@ public class BlogStackUserService implements IBlogStackUserService {
         return ResponseEntity.status(HttpStatus.OK).body(ServiceResponseBean.builder().status(Boolean.TRUE).message(BlogStackMessageConstants.DATA_DELETED).build());
     }
 
-    @Override
+    /*@Override
     public ResponseEntity<?> fetchUserByUserId(String userId) {
 
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuUserIdIgnoreCase(userId);
@@ -148,7 +150,7 @@ public class BlogStackUserService implements IBlogStackUserService {
                     .data(IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get()))
                     .build()
                     ,HttpStatus.OK);
-    }
+    }*/
 
     public ResponseEntity<?> resetPassword(String blogStackUSerEmail, String blogStackUserPassword) {
 

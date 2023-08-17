@@ -2,6 +2,7 @@ package com.blogstack.controllers;
 
 import com.blogstack.beans.redis.BlogStackForgotPasswordBean;
 import com.blogstack.beans.request.UserRequestBean;
+import com.blogstack.beans.response.ServiceResponseBean;
 import com.blogstack.commons.BlogStackMessageConstants;
 import com.blogstack.service.IBlogStackAuthenticationService;
 import com.blogstack.service.IBlogStackS3BucketPhotoUploadService;
@@ -35,7 +36,7 @@ public class BlogStackUserController {
         return this.blogStackUserService.fetchUserById(emailId);
     }
     @GetMapping(value = "/user/{user_Id}")
-    public ResponseEntity<?> fetchUserByUserId(@PathVariable(value = "user_Id") @NotBlank(message = BlogStackMessageConstants.USER_ID_CANT_BLANK) String userId){
+    public ResponseEntity<ServiceResponseBean> fetchUserByUserId(@PathVariable(value = "user_Id") @NotBlank(message = BlogStackMessageConstants.USER_ID_CANT_BLANK) String userId){
         return this.blogStackUserService.fetchUserByUserId(userId);
     }
     @GetMapping(value = "/")
@@ -58,10 +59,10 @@ public class BlogStackUserController {
         return this.blogStackS3BucketProfilePhotoUploadService.uploadProfilePhoto(emailId, profilePic);
     }
 
-    @GetMapping(value = "/user-id/{user_id}")
+    /*@GetMapping(value = "/user-id/{user_id}")
     public ResponseEntity<?> getUserById(@PathVariable("user_id") String userId) {
         return this.blogStackUserService.fetchUserByUserId(userId);
-    }
+    }*/
     @GetMapping(value = "/all-questions/{email_id}")
     public ResponseEntity<?> fetchAllQuestionByUserId(@PathVariable(value = "email_id") @NotBlank(message = BlogStackMessageConstants.EMAIL_CANT_BLANK) String emailId){
         return this.blogStackUserService.fetchAllQuestionByUserId(emailId);
