@@ -36,7 +36,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-@CacheConfig(cacheNames = "blogstack-user-management")
+// @CacheConfig(cacheNames = "blogstack-user-management")
 @Transactional
 public class BlogStackUserService implements IBlogStackUserService {
 
@@ -89,7 +89,7 @@ public class BlogStackUserService implements IBlogStackUserService {
     }
 
     @Override
-    @Cacheable(key = "#emailId")
+    // @Cacheable(key = "#emailId")
     public ResponseEntity<?> fetchUserById(String emailId) {
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(emailId);
         LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);
@@ -107,7 +107,7 @@ public class BlogStackUserService implements IBlogStackUserService {
     }
 
     @Override
-    @CachePut(key = "#userRequestBean", value = "blogstack-user-management")
+    // @CachePut(key = "#userRequestBean", value = "blogstack-user-management")
     public ResponseEntity<?> updateUser(UserRequestBean userRequestBean) {
         Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(userRequestBean.getEmailId());
         LOGGER.info("BlogStackUserOptional :: {}", blogStackUserOptional);

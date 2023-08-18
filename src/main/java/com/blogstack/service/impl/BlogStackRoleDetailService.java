@@ -33,12 +33,13 @@ public class BlogStackRoleDetailService implements IBlogStackRoleDetailService {
 
     @Value("#{'${spring.application.name}'.toUpperCase()}")
     private String springApplicationName;
-
-    @Autowired
     private IBlogStackRoleDetailRepository blogStackRoleDetailRepository;
-
-    @Autowired
     private IBlogStackRoleDetailPojoEntityMapper blogStackRoleDetailPojoEntityMapper;
+    @Autowired
+    public BlogStackRoleDetailService(IBlogStackRoleDetailRepository blogStackRoleDetailRepository, IBlogStackRoleDetailPojoEntityMapper blogStackRoleDetailPojoEntityMapper) {
+        this.blogStackRoleDetailRepository = blogStackRoleDetailRepository;
+        this.blogStackRoleDetailPojoEntityMapper = blogStackRoleDetailPojoEntityMapper;
+    }
 
     @Override
     public ResponseEntity<?> addRole(RoleRequestBean roleRequestBean) {

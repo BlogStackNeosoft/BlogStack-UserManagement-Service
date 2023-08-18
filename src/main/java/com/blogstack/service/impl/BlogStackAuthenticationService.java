@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class BlogStackAuthenticationService implements IBlogStackAuthenticationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(BlogStackAuthenticationService.class);
 
     @Value("#{'${spring.application.name}'.toUpperCase()}")
     private String springApplicationName;
