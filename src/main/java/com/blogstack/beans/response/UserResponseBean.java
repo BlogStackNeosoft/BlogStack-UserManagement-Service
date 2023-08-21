@@ -51,11 +51,17 @@ public class UserResponseBean {
     @JsonProperty(value = "questions")
     private Object questions;
 
+    @JsonProperty(value = "answers")
+    private Object answers;
+
+    @JsonProperty(value = "comments")
+    private Object comments;
+
     @JsonProperty(value = "status")
     private String status;
 
     @JsonProperty(value = "date_of_birth")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = BlogStackCommonConstants.DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = BlogStackCommonConstants.DOB_DATE_FORMAT)
     private LocalDate dateOfBirth;
 
     @JsonProperty(value = "address")

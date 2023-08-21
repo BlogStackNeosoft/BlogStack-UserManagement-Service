@@ -9,6 +9,8 @@ import com.blogstack.entities.BlogStackRoleDetail;
 import com.blogstack.entities.BlogStackUser;
 import com.blogstack.enums.UserStatusEnum;
 import com.blogstack.exceptions.BlogStackDataNotFoundException;
+import com.blogstack.feign.clients.IBlogStackAnswerFeignService;
+import com.blogstack.feign.clients.IBlogStackCommentFeignService;
 import com.blogstack.feign.clients.IBlogStackQuestionFeignService;
 import com.blogstack.mappers.entity.pojo.IBlogStackUserEntityPojoMapper;
 import com.blogstack.mappers.pojo.entity.IBlogStackUserPojoEntityMapper;
@@ -49,14 +51,18 @@ public class BlogStackUserService implements IBlogStackUserService {
     private IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private IBlogStackQuestionFeignService blogStackQuestionFeignService;
+    private IBlogStackAnswerFeignService blogStackAnswerFeignService;
+    private IBlogStackCommentFeignService blogStackCommentFeignService;
 
     @Autowired
-    public BlogStackUserService(IBlogStackUserRepository blogStackUserRepository, IBlogStackRoleDetailRepository blogStackRoleDetailRepository, IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper, BCryptPasswordEncoder bCryptPasswordEncoder, IBlogStackQuestionFeignService blogStackQuestionFeignService) {
+    public BlogStackUserService(IBlogStackUserRepository blogStackUserRepository, IBlogStackRoleDetailRepository blogStackRoleDetailRepository, IBlogStackUserPojoEntityMapper blogStackUserPojoEntityMapper, BCryptPasswordEncoder bCryptPasswordEncoder, IBlogStackQuestionFeignService blogStackQuestionFeignService, IBlogStackAnswerFeignService blogStackAnswerFeignService, IBlogStackCommentFeignService blogStackCommentFeignService) {
         this.blogStackUserRepository = blogStackUserRepository;
         this.blogStackRoleDetailRepository = blogStackRoleDetailRepository;
         this.blogStackUserPojoEntityMapper = blogStackUserPojoEntityMapper;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.blogStackQuestionFeignService = blogStackQuestionFeignService;
+        this.blogStackAnswerFeignService = blogStackAnswerFeignService;
+        this.blogStackCommentFeignService = blogStackCommentFeignService;
     }
 
     @Override
@@ -188,4 +194,35 @@ public class BlogStackUserService implements IBlogStackUserService {
         return ResponseEntity.ok(ServiceResponseBean.builder().status(Boolean.TRUE).data(userResponseBean).build());
     }
 
+    @Override
+    public ResponseEntity<?> fetchAllAnswerByUserId(String emailId) {
+        ResponseEntity<?> blogStackAnswerList = this.blogStackAnswerFeignService.fetchAllAnswerByUserId(emailId);
+        LOGGER.info("BlogStackAnswerList :: {}", blogStackAnswerList);
+
+        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(emailId);
+        LOGGER.info("BlogStackUser :: {}", blogStackUserOptional);
+
+        if(blogStackUserOptional.isEmpty())
+            throw new BlogStackDataNotFoundException("The user with given email does not exists");
+
+        UserResponseBean userResponseBean = IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get());
+        userResponseBean.setAnswers(blogStackAnswerList.getBody());
+        return ResponseEntity.ok(ServiceResponseBean.builder().status(Boolean.TRUE).data(userResponseBean).build());
+    }
+
+    @Override
+    public ResponseEntity<?> fetchAllCommentByUserId(String emailId) {
+        ResponseEntity<?> blogStackCommentList = this.blogStackCommentFeignService.fetchAllCommentByUserId(emailId);
+        LOGGER.info("BlogStackCommentList :: {}", blogStackCommentList);
+
+        Optional<BlogStackUser> blogStackUserOptional = this.blogStackUserRepository.findByBsuEmailIdIgnoreCase(emailId);
+        LOGGER.info("BlogStackUser :: {}", blogStackUserOptional);
+
+        if(blogStackUserOptional.isEmpty())
+            throw new BlogStackDataNotFoundException("The user with given email does not exists");
+
+        UserResponseBean userResponseBean = IBlogStackUserEntityPojoMapper.INSTANCE.mapUserMasterEntityPojoMapping(blogStackUserOptional.get());
+        userResponseBean.setComments(blogStackCommentList.getBody());
+        return ResponseEntity.ok(ServiceResponseBean.builder().status(Boolean.TRUE).data(userResponseBean).build());
+    }
 }

@@ -13,6 +13,7 @@ spring:
     name: BlogStackIAMService
   datasource:
     url: jdbc:postgresql://ec2-52-66-208-5.ap-south-1.compute.amazonaws.com:5432/blogstackusermanagement
+#    url: jdbc:postgresql://localhost:5432/BlogStackIAMService
     username: postgres
     password: root
   jpa:
